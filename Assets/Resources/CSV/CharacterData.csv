@@ -1,0 +1,2 @@
+ID,HP,MP,LV,ATK,DEF,MoveSpeed,AtkSpeed,ViewRadius
+C0000,10,10,1,1,0,6,0.2,-1
