@@ -14,7 +14,7 @@ public class DataManager : Singleton<DataManager>
     }
 
     public void Init() {
-        PlayerInit();
+        CharacterDataInit();
     }
 
     public void Load() {
@@ -23,6 +23,22 @@ public class DataManager : Singleton<DataManager>
 
     public void Unload() {
 
+    }
+
+    public CharacterData GetCharacterData(string id)
+    {
+        CharacterData data = new CharacterData();
+        CharacterBaseData baseData;
+        if (_characterDic.TryGetValue(id, out baseData))
+        {
+            data = new CharacterData(baseData);
+        }
+        else
+        {
+            Debug.LogError($"No data found for id: {id}");
+        }
+
+        return data;
     }
 
     void CharacterDataInit() {
@@ -46,8 +62,4 @@ public class DataManager : Singleton<DataManager>
         }
     }
 
-    void PlayerInit() {
-        _playerData = new PlayerData();
-
-    }
 }
