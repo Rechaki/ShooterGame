@@ -17,8 +17,8 @@ public class Friend : MonoBehaviour
 
     void Start()
     {
-        m_bulletPrefab = ResourceManager.Instance.Load<GameObject>(AssetPath.PLAYER_BULLET);
-        m_deadVFXPrefab = ResourceManager.Instance.Load<GameObject>(AssetPath.PLAYER_DEAD_VFX);
+        m_bulletPrefab = ResourceManager.I.Load<GameObject>(AssetPath.PLAYER_BULLET);
+        m_deadVFXPrefab = ResourceManager.I.Load<GameObject>(AssetPath.PLAYER_DEAD_VFX);
         targetPos = Vector3.zero;
         m_rescued = false;
     }
@@ -77,7 +77,7 @@ public class Friend : MonoBehaviour
             {
                 if (m_deadVFXPrefab != null)
                 {
-                    GameObject vfxObj = ObjectPool.Instance.Pop(m_deadVFXPrefab);
+                    GameObject vfxObj = ObjectPool.I.Pop(m_deadVFXPrefab);
                     vfxObj.transform.position = transform.position;
                     vfxObj.transform.forward = collision.transform.forward;
                     vfxObj.SetActive(true);
@@ -91,7 +91,7 @@ public class Friend : MonoBehaviour
     }
 
     private void Fire() {
-        GameObject bulletObject = ObjectPool.Instance.Pop(m_bulletPrefab);
+        GameObject bulletObject = ObjectPool.I.Pop(m_bulletPrefab);
         bulletObject.transform.position = firePoint.position;
         Bullet bullet = bulletObject.GetComponent<Bullet>();
         bullet.transform.forward = transform.forward;

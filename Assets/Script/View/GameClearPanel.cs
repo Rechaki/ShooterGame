@@ -13,6 +13,6 @@ public class GameClearPanel : MonoBehaviour
 
     private void OnClikck() {
         EventMsgManager.Launch(EventMsg.GameRestart);
-        LevelManager.Instance.LoadScene("0_0");
+        LevelManager.I.LoadScene("0_0");
     }
 }

@@ -28,7 +28,7 @@ public class SprintEnemy : MonoBehaviour
     private int m_index = 0;
 
     void Start() {
-        m_deadVFX = ResourceManager.Instance.Load<GameObject>(AssetPath.SPRINT_DEAD_VFX);
+        m_deadVFX = ResourceManager.I.Load<GameObject>(AssetPath.SPRINT_DEAD_VFX);
         if (movePos.Count != 0)
         {
             m_index = 0;
@@ -42,7 +42,7 @@ public class SprintEnemy : MonoBehaviour
     }
 
     void Update() {
-        if (GameManager.Instance.isGameOver)
+        if (GameManager.I.isGameOver)
         {
             return;
         }
@@ -99,7 +99,7 @@ public class SprintEnemy : MonoBehaviour
         }
         if (m_deadVFX != null)
         {
-            GameObject vfxObj = ObjectPool.Instance.Pop(m_deadVFX);
+            GameObject vfxObj = ObjectPool.I.Pop(m_deadVFX);
             vfxObj.transform.position = transform.position;
             vfxObj.transform.forward = other.transform.forward;
             vfxObj.SetActive(true);

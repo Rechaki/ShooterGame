@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Singleton<T> : MonoBehaviour where T : Singleton<T>
 {
-    protected static T m_instance;
+    protected static T _instance;
 
-    public static T Instance
+    public static T I
     {
         get
         {
-            if (m_instance == null)
+            if (_instance == null)
             {
                 T instance = null;
                 var type = typeof(T);
@@ -25,13 +25,13 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T>
                 }
                 else
                 {
-                    m_instance = instance;
+                    _instance = instance;
                 }
 
-                m_instance = instance;
+                _instance = instance;
             }
 
-            return m_instance;
+            return _instance;
         }
     }
 }

@@ -22,13 +22,13 @@ public class Player : MonoBehaviour {
     private const float LOOK_AT_DES = 10.0f;
 
     void Start() {
-        _bulletPrefab = ResourceManager.Instance.Load<GameObject>(AssetPath.PLAYER_BULLET);
-        _deadVFXPrefab = ResourceManager.Instance.Load<GameObject>(AssetPath.PLAYER_DEAD_VFX);
+        _bulletPrefab = ResourceManager.I.Load<GameObject>(AssetPath.PLAYER_BULLET);
+        _deadVFXPrefab = ResourceManager.I.Load<GameObject>(AssetPath.PLAYER_DEAD_VFX);
         _lastPos = transform.position;
 
-        InputManager.Instance.MoveEvent += Move;
-        InputManager.Instance.LookAtEvent += LookAt;
-        InputManager.Instance.FireEvent += Fire;
+        InputManager.I.MoveEvent += Move;
+        InputManager.I.LookAtEvent += LookAt;
+        InputManager.I.FireEvent += Fire;
         //ActionOwner owner = new ActionOwner
         //{
         //    component = transform,
@@ -38,7 +38,7 @@ public class Player : MonoBehaviour {
     }
 
     void Update() {
-        if (GameManager.Instance.isGameOver)
+        if (GameManager.I.isGameOver)
         {
             return;
         }
@@ -50,8 +50,8 @@ public class Player : MonoBehaviour {
     }
 
     void OnDestroy() {
-        InputManager.Instance.MoveEvent -= Move;
-        InputManager.Instance.LookAtEvent -= LookAt;
+        InputManager.I.MoveEvent -= Move;
+        InputManager.I.LookAtEvent -= LookAt;
     }
 
     void OnCollisionEnter(Collision collision) {
@@ -76,7 +76,7 @@ public class Player : MonoBehaviour {
     }
 
     private void LookAt(Vector2 v) {
-        switch (InputManager.Instance.DevicesType)
+        switch (InputManager.I.DevicesType)
         {
             case InputManager.Devices.Keyboard:
                 Vector3 pos = new Vector3(v.x, v.y, 0);
@@ -134,7 +134,7 @@ public class Player : MonoBehaviour {
         if (value > 0 && _time > 0.2)
         {
             _time = 0;
-            GameObject bulletObject = ObjectPool.Instance.Pop(_bulletPrefab);
+            GameObject bulletObject = ObjectPool.I.Pop(_bulletPrefab);
             bulletObject.transform.position = _firePoint.position;
             Bullet bullet = bulletObject.GetComponent<Bullet>();
             bullet.transform.forward = transform.forward;
@@ -145,7 +145,7 @@ public class Player : MonoBehaviour {
     private void Dead() {
         if (_deadVFXPrefab != null)
         {
-            GameObject vfxObj = ObjectPool.Instance.Pop(_deadVFXPrefab);
+            GameObject vfxObj = ObjectPool.I.Pop(_deadVFXPrefab);
             vfxObj.transform.position = transform.position;
             vfxObj.transform.forward = -transform.forward;
             vfxObj.SetActive(true);

@@ -20,7 +20,7 @@ public class Level : MonoBehaviour
         //    action = CheckEnemiseState
         //};
         //EventMsgManager.Add(EventMsg.KilledTheEnemy, owner);
-        UIManager.Instance.Open(uiPath);
+        UIManager.I.Open(uiPath);
 
     }
 

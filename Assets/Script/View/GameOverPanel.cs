@@ -21,7 +21,7 @@ public class GameOverPanel : UIPanel
 
     private void OnClikck() {
         EventMsgManager.Launch(EventMsg.GameRestart);
-        LevelManager.Instance.LoadScene(LevelManager.Instance.CurrentLevel);
+        LevelManager.I.LoadScene(LevelManager.I.CurrentLevel);
     }
 
 }

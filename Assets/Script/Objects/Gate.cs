@@ -27,7 +27,7 @@ public class Gate : MonoBehaviour
     void OnTriggerEnter(Collider other) {
         if (other.transform.tag == "Player")
         {
-            LevelManager.Instance.LoadScene(nextLevel);
+            LevelManager.I.LoadScene(nextLevel);
         }
         
     }

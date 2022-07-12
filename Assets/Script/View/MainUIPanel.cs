@@ -9,7 +9,7 @@ public class MainUIPanel : UIPanel
 
     protected override void Show() {
         Debug.Log("Show");
-        var playerData = DataManager.Instance.playerData;
+        var playerData = DataManager.I.playerData;
         playerData.refreshEvent += Refresh;
         hp.fillAmount = 1;
         //ActionOwner owner = new ActionOwner
@@ -23,7 +23,7 @@ public class MainUIPanel : UIPanel
     }
 
     protected override void Hide() {
-        DataManager.Instance.playerData.refreshEvent -= Refresh;
+        DataManager.I.playerData.refreshEvent -= Refresh;
     }
 
     void Refresh(PlayerData data) {

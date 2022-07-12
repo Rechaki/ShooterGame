@@ -9,6 +9,7 @@ public class TitlePanel : UIPanel
     public Button startBtn;
 
     protected override void Show() {
+        Debug.Log("Show");
         startBtn.onClick.AddListener(StartBtnClick);
     }
 
@@ -17,6 +18,6 @@ public class TitlePanel : UIPanel
     }
 
     private void StartBtnClick() {
-        LevelManager.Instance.LoadScene("0_1");
+        LevelManager.I.LoadScene("0_1");
     }
 }

@@ -20,7 +20,7 @@ public class ParticleSystemCtrl : MonoBehaviour
 
         if (gameObject.activeSelf && m_particleSystem.isStopped)
         {
-            ObjectPool.Instance.Push(gameObject);
+            ObjectPool.I.Push(gameObject);
         }
     }
 

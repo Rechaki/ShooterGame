@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.InputSystem.Users;
 using UnityEngine.InputSystem.Utilities;
 
@@ -36,10 +37,7 @@ public class InputManager : Singleton<InputManager>
     float _rightTriggerValue = 0;
 
     void Start() {
-        RefreshInputType();
-        InputSystem.onDeviceChange += OnDevicesChanged;
-
-        //DontDestroyOnLoad(this);
+        Init();
     }
 
     void Update() {
@@ -66,18 +64,13 @@ public class InputManager : Singleton<InputManager>
 
     }
 
-    void OnDevicesChanged(InputDevice device, InputDeviceChange changeType) {
-        switch (changeType)
-        {
-            case InputDeviceChange.Added:
-            case InputDeviceChange.Removed:
-            case InputDeviceChange.Disconnected:
-            case InputDeviceChange.Reconnected:
-                RefreshInputType();
-                DevicesChangedEvent?.Invoke(device, changeType);
-                break;
-        }
+    void Init()
+    {
+        RefreshInputType();
 
+        InputSystem.onDeviceChange += OnDevicesChanged;
+
+        DontDestroyOnLoad(this);
     }
 
     void RefreshInputType() {
@@ -89,6 +82,21 @@ public class InputManager : Singleton<InputManager>
         {
             DevicesType = Devices.Gamepad;
         }
+    }
+
+    void OnDevicesChanged(InputDevice device, InputDeviceChange changeType)
+    {
+        switch (changeType)
+        {
+            case InputDeviceChange.Added:
+            case InputDeviceChange.Removed:
+            case InputDeviceChange.Disconnected:
+            case InputDeviceChange.Reconnected:
+                RefreshInputType();
+                DevicesChangedEvent?.Invoke(device, changeType);
+                break;
+        }
+
     }
 
     void KeyboardInput() {

@@ -5,21 +5,22 @@ public class GameManager : Singleton<GameManager>
 {
 	public bool isGameOver { get; private set; }
 
-	private bool m_inited = false;
+	private bool _inited = false;
 
-
-    private void Awake() {
-		if (!this.m_inited)
+    void Awake() {
+		if (!_inited)
 		{
-			this.Init();
+			Init();
 		}
 	}
 
 	public void Init() {
 		Application.targetFrameRate = 60;
+		DataManager.I.Init();
 
-		m_inited = true;
-		isGameOver = false;
+		_inited = true;
+		DontDestroyOnLoad(this);
+		//isGameOver = false;
 
 		//ActionOwner gamerClear = new ActionOwner
 		//{
@@ -44,12 +45,12 @@ public class GameManager : Singleton<GameManager>
 	}
 
 	private void GameClear() {
-		UIManager.Instance.Open(AssetPath.GAME_CLEAR_PANEL);
+		UIManager.I.Open(AssetPath.GAME_CLEAR_PANEL);
 	}
 
 	private void GameOver() {
 		isGameOver = true;
-		UIManager.Instance.Open(AssetPath.GAME_OVER_PANEL);
+		UIManager.I.Open(AssetPath.GAME_OVER_PANEL);
 	}
 
 	private void Restart() {

@@ -29,7 +29,7 @@ public class Bullet : MonoBehaviour
         {
             return;
         }
-        ObjectPool.Instance.Push(gameObject);
+        ObjectPool.I.Push(gameObject);
 
     }
 

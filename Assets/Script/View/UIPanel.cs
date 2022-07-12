@@ -8,8 +8,13 @@ public abstract class UIPanel : MonoBehaviour
         In();
     }
 
-    void OnDestroy() {
+    void OnDisable()
+    {
         Out();
+    }
+
+    void OnDestroy() {
+        //Out();
     }
 
     public void In() {

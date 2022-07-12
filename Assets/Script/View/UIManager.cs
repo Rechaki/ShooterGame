@@ -14,7 +14,7 @@ public class UIManager : Singleton<UIManager>
         }
         else
         {
-            var prefab = ResourceManager.Instance.Load<GameObject>(path);
+            var prefab = ResourceManager.I.Load<GameObject>(path);
             if (prefab == null)
             {
                 Debug.LogError("Can not load:" + path);

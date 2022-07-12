@@ -41,14 +41,14 @@ public class Enemy : MonoBehaviour
     private float m_timer = 0;
 
     void Start() {
-        m_bulletPrefab = ResourceManager.Instance.Load<GameObject>(AssetPath.ENEMY_BULLET);
-        m_deadVFXPrefab = ResourceManager.Instance.Load<GameObject>(AssetPath.ENEMY_DEAD_VFX);
+        m_bulletPrefab = ResourceManager.I.Load<GameObject>(AssetPath.ENEMY_BULLET);
+        m_deadVFXPrefab = ResourceManager.I.Load<GameObject>(AssetPath.ENEMY_DEAD_VFX);
         m_startPoint = transform.position;
         m_startDirection = transform.rotation;
     }
 
     void Update() {
-        if (GameManager.Instance.isGameOver)
+        if (GameManager.I.isGameOver)
         {
             return;
         }
@@ -123,7 +123,7 @@ public class Enemy : MonoBehaviour
             {
                 if (m_deadVFXPrefab != null)
                 {
-                    GameObject vfxObj = ObjectPool.Instance.Pop(m_deadVFXPrefab);
+                    GameObject vfxObj = ObjectPool.I.Pop(m_deadVFXPrefab);
                     vfxObj.transform.position = transform.position;
                     vfxObj.transform.forward = other.transform.forward;
                     vfxObj.SetActive(true);
