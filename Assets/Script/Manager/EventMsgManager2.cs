@@ -4,11 +4,18 @@ using UnityEngine;
 using System;
 using System.Reflection;
 
-public static class EventMsgManager
+public static class EventMsgManager<T>
 {
+    private class EventData
+    {
+        public List<Callback<T>> callbacks = new List<Callback<T>>();
+        public List<Callback<T>> temp = new List<Callback<T>>();
+        public bool isInvoking;
+    }
+
     private static Dictionary<EventMsg, EventData> _eventDic = new Dictionary<EventMsg, EventData>();
 
-    public static void AddListener(EventMsg msg, Callback handler) {
+    public static void AddListener(EventMsg msg, Callback<T> handler) {
         Dictionary<EventMsg, EventData> obj = _eventDic;
         lock (obj)
         {
@@ -22,7 +29,7 @@ public static class EventMsgManager
         }
     }
 
-    public static void RemoveListener(EventMsg msg, Callback handler) {
+    public static void RemoveListener(EventMsg msg, Callback<T> handler) {
         Dictionary<EventMsg, EventData> obj = _eventDic;
         lock (obj)
         {
@@ -39,7 +46,7 @@ public static class EventMsgManager
         }
     }
 
-    public static void Launch(EventMsg msg) {
+    public static void Launch(EventMsg msg, T arg) {
         Dictionary<EventMsg, EventData> obj = _eventDic;
         lock (obj)
         {
@@ -56,7 +63,7 @@ public static class EventMsgManager
                 {
                     try
                     {
-                        eventData.temp[i]();
+                        eventData.temp[i](arg);
                     }
                     catch (Exception exception)
                     {
