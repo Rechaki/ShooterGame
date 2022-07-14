@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using System.Reflection;
 
-public static class EventMsgManager<T>
+public static class EventMessenger<T>
 {
     private class EventData
     {
