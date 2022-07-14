@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    public int Damage { get; } = 1;
     public float speed = 0.1f;
-
-    float m_time = 0.0f;
-
 
     void Start()
     {
@@ -19,7 +17,6 @@ public class Bullet : MonoBehaviour
         if (gameObject.activeSelf)
         {
             transform.position += transform.forward * speed;
-            m_time += Time.deltaTime;
         }
     }
 

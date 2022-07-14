@@ -6,17 +6,17 @@ public class Player : MonoBehaviour {
     public List<Friend> friends = new List<Friend>();
 
     [SerializeField]
-    private Rigidbody _rb;
+    Rigidbody _rb;
     [SerializeField]
-    private Transform _firePoint;
-    [SerializeField]
-    private float _moveSpeed;
+    Transform _firePoint;
 
-    private GameObject _bulletPrefab;
-    private GameObject _deadVFXPrefab;
-    private Vector3 _lastPos = Vector3.zero;
-    private float _time = 0.5f;
-    private Queue<Vector3> _posQueue = new Queue<Vector3>();
+    GameObject _bulletPrefab;
+    GameObject _deadVFXPrefab;
+    Vector3 _lastPos = Vector3.zero;
+    float _time = 0.5f;
+    float _moveSpeed;
+    float _atkSpeed;
+    Queue<Vector3> _posQueue = new Queue<Vector3>();
 
     private const float SPACE = 2.0f;
     private const float LOOK_AT_DES = 10.0f;
@@ -29,20 +29,12 @@ public class Player : MonoBehaviour {
         InputManager.I.MoveEvent += Move;
         InputManager.I.LookAtEvent += LookAt;
         InputManager.I.FireEvent += Fire;
-        //ActionOwner owner = new ActionOwner
-        //{
-        //    component = transform,
-        //    action = Dead
-        //};
-        //EventMsgManager.Add(EventMsg.GameOver, owner);
+
+        EventMessenger.AddListener(EventMsg.GameOver, Dead);
+        DataManager.I.PlayerData.RefreshEvent += Refresh;
     }
 
     void Update() {
-        if (GameManager.I.isGameOver)
-        {
-            return;
-        }
-
         SetFriend();
 
         _time += Time.deltaTime;
@@ -52,18 +44,17 @@ public class Player : MonoBehaviour {
     void OnDestroy() {
         InputManager.I.MoveEvent -= Move;
         InputManager.I.LookAtEvent -= LookAt;
+        InputManager.I.FireEvent -= Fire;
+
+        EventMessenger.RemoveListener(EventMsg.GameOver, Dead);
     }
 
     void OnCollisionEnter(Collision collision) {
         //Debug.Log(collision.transform.tag);
-        if (collision.transform.tag == "Bullet")
-        {
-            //Debug.Log("!!!!!!");
-            EventMsgManager.Launch(EventMsg.Damage);
-        }
+        EventMessenger<Collision>.Launch(EventMsg.CollisionOfPlayer, collision);
     }
 
-    private void Move(Vector2 v) {
+    void Move(Vector2 v) {
         float x = v.x;
         float z = v.y;
         if (x * z != 0)
@@ -75,7 +66,7 @@ public class Player : MonoBehaviour {
         _rb.velocity = moveInput * _moveSpeed;// * Time.deltaTime;
     }
 
-    private void LookAt(Vector2 v) {
+    void LookAt(Vector2 v) {
         switch (InputManager.I.DevicesType)
         {
             case InputManager.Devices.Keyboard:
@@ -99,7 +90,37 @@ public class Player : MonoBehaviour {
         
     }
 
-    private void SetFriend() {
+    void Fire(float value) {
+        if (value > 0 && _time > _atkSpeed)
+        {
+            _time = 0;
+            GameObject bulletObject = ObjectPool.I.Pop(_bulletPrefab);
+            bulletObject.transform.position = _firePoint.position;
+            Bullet bullet = bulletObject.GetComponent<Bullet>();
+            bullet.transform.forward = transform.forward;
+            bullet.gameObject.SetActive(true);
+        }
+    }
+
+    void Dead() {
+        if (_deadVFXPrefab != null)
+        {
+            GameObject vfxObj = ObjectPool.I.Pop(_deadVFXPrefab);
+            vfxObj.transform.position = transform.position;
+            vfxObj.transform.forward = -transform.forward;
+            vfxObj.SetActive(true);
+            ParticleSystemCtrl vfx = _deadVFXPrefab.GetComponent<ParticleSystemCtrl>();
+            vfx.Play();
+        }
+        gameObject.SetActive(false);
+    }
+
+    void Refresh(CharacterData data) {
+        _moveSpeed = data.NowMoveSpeed;
+        _atkSpeed = data.NowAtkSpeed;
+    }
+
+    void SetFriend() {
         if (Vector3.Distance(_lastPos, transform.position) >= SPACE)
         {
             _lastPos = transform.position;
@@ -124,35 +145,10 @@ public class Player : MonoBehaviour {
                     friends[index].targetPos = posList[i];
                     index++;
                 }
-                
+
             }
 
         }
-    }
-
-    private void Fire(float value) {
-        if (value > 0 && _time > 0.2)
-        {
-            _time = 0;
-            GameObject bulletObject = ObjectPool.I.Pop(_bulletPrefab);
-            bulletObject.transform.position = _firePoint.position;
-            Bullet bullet = bulletObject.GetComponent<Bullet>();
-            bullet.transform.forward = transform.forward;
-            bullet.gameObject.SetActive(true);
-        }
-    }
-
-    private void Dead() {
-        if (_deadVFXPrefab != null)
-        {
-            GameObject vfxObj = ObjectPool.I.Pop(_deadVFXPrefab);
-            vfxObj.transform.position = transform.position;
-            vfxObj.transform.forward = -transform.forward;
-            vfxObj.SetActive(true);
-            ParticleSystemCtrl vfx = _deadVFXPrefab.GetComponent<ParticleSystemCtrl>();
-            vfx.Play();
-        }
-        gameObject.SetActive(false);
     }
 
 }

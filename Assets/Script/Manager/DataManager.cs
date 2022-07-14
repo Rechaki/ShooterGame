@@ -4,29 +4,30 @@ using UnityEngine;
 
 public class DataManager : Singleton<DataManager>
 {
-    public PlayerData playerData => _playerData;
+    public PlayerData PlayerData { get; private set; }
+    public bool GameOver { get; private set; }
 
     Dictionary<string, CharacterBaseData> _characterDic = new Dictionary<string, CharacterBaseData>();
-    PlayerData _playerData;
-
-    void Start() {
-
-    }
+    Dictionary<string, EnemyBaseData> _enemyDic = new Dictionary<string, EnemyBaseData>();
+    GameStateData _stateData;
 
     public void Init() {
-        CharacterDataInit();
+        Load();
+
+        GameStateInit();
+        PlayerDataInit();
     }
 
     public void Load() {
-
+        CharacterBaseDataInit();
+        EnemyDataInit();
     }
 
     public void Unload() {
 
     }
 
-    public CharacterData GetCharacterData(string id)
-    {
+    public CharacterData GetCharacterData(string id) {
         CharacterData data = new CharacterData();
         CharacterBaseData baseData;
         if (_characterDic.TryGetValue(id, out baseData))
@@ -41,7 +42,29 @@ public class DataManager : Singleton<DataManager>
         return data;
     }
 
-    void CharacterDataInit() {
+    public EnemyData GetEnemyData(string id) {
+        EnemyData data = new EnemyData();
+        return data;
+    }
+
+    void GameStateInit() {
+        _stateData = new GameStateData();
+        _stateData.isClear = false;
+        _stateData.isGameOver = false;
+        GameOver = _stateData.isGameOver;
+
+        EventMessenger.AddListener(EventMsg.GameOver, SetGameOver);
+    }
+
+    void SetGameOver() {
+        GameOver = true;
+    }
+
+    void PlayerDataInit() {
+        PlayerData = new PlayerData();
+    }
+
+    void CharacterBaseDataInit() {
         var data = ResourceManager.I.ReadFile(AssetPath.CHARACTER_DATA);
         foreach (var item in data)
         {
@@ -58,6 +81,30 @@ public class DataManager : Singleton<DataManager>
                 character.atkSpeed = float.Parse(item[7]);
                 character.viewRadius = float.Parse(item[8]);
                 _characterDic.Add(character.id, character);
+            }
+        }
+    }
+
+    void EnemyDataInit() {
+        var data = ResourceManager.I.ReadFile(AssetPath.ENEMY_DATA);
+        foreach (var item in data)
+        {
+            if (item.Length > 0)
+            {
+                EnemyBaseData enemy = new EnemyBaseData();
+                enemy.id = item[0];
+                enemy.type = (EnemyType)int.Parse(item[1]);
+                enemy.hp = int.Parse(item[2]);
+                enemy.mp = int.Parse(item[3]);
+                enemy.lv = int.Parse(item[4]);
+                enemy.atk = int.Parse(item[5]);
+                enemy.def = int.Parse(item[6]);
+                enemy.moveSpeed = float.Parse(item[7]);
+                enemy.atkSpeed = float.Parse(item[8]);
+                enemy.turnSpeed = float.Parse(item[9]);
+                enemy.viewRadius = float.Parse(item[10]);
+                enemy.viewAngle = float.Parse(item[11]);
+                _enemyDic.Add(enemy.id, enemy);
             }
         }
     }

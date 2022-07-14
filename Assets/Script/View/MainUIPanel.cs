@@ -9,24 +9,19 @@ public class MainUIPanel : UIPanel
 
     protected override void Show() {
         Debug.Log("Show");
-        var playerData = DataManager.I.playerData;
-        playerData.refreshEvent += Refresh;
+        var playerData = DataManager.I.PlayerData;
+        playerData.RefreshEvent += Refresh;
         hp.fillAmount = 1;
-        //ActionOwner owner = new ActionOwner
-        //{
-        //    component = transform,
-        //    action = () => {
-        //        hp.fillAmount = (float)playerData.nowHp / playerData.maxHp;
-        //    }
-        //};
-        //EventMsgManager.Instance.Add(EventMsg.HPHasChanged, owner);
     }
 
     protected override void Hide() {
-        DataManager.I.playerData.refreshEvent -= Refresh;
+        if (DataManager.I.PlayerData != null)
+        {
+            DataManager.I.PlayerData.RefreshEvent -= Refresh;
+        }
     }
 
-    void Refresh(PlayerData data) {
-        hp.fillAmount = (float)data.nowHp / data.maxHp;
+    void Refresh(CharacterData data) {
+        hp.fillAmount = (float)data.NowHp / data.HP;
     }
 }
