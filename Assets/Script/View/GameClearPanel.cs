@@ -12,7 +12,7 @@ public class GameClearPanel : MonoBehaviour
     }
 
     private void OnClikck() {
-        EventMsgManager.Launch(EventMsg.GameRestart);
+        EventMessenger.Launch(EventMsg.GameRestart);
         LevelManager.I.LoadScene("0_0");
     }
 }

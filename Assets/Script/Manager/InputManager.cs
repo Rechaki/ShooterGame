@@ -54,6 +54,8 @@ public class InputManager : Singleton<InputManager>
                 break;
         }
 
+        if (DataManager.I.GameOver) return;
+
         MoveEvent?.Invoke(_leftStcikValue);
         LookAtEvent?.Invoke(_rightStcikValue);
         FireEvent?.Invoke(_rightTriggerValue);

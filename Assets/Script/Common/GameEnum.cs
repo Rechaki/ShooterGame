@@ -5,6 +5,12 @@
     Blind = 2,                          //攻撃できない
 }
 
+public enum EnemyType
+{
+    None = 0,
+    Chase = 1,
+}
+
 //スキルのタイプ
 public enum SkillBehavior
 {

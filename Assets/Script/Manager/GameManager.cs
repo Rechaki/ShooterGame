@@ -5,7 +5,7 @@ public class GameManager : Singleton<GameManager>
 {
 	public bool isGameOver { get; private set; }
 
-	private bool _inited = false;
+	bool _inited = false;
 
     void Awake() {
 		if (!_inited)

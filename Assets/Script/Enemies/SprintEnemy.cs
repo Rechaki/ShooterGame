@@ -95,7 +95,7 @@ public class SprintEnemy : MonoBehaviour
         }
         if (other.gameObject.tag == "Player")
         {
-            EventMsgManager.Launch(EventMsg.Damage);
+            EventMessenger.Launch(EventMsg.Damage);
         }
         if (m_deadVFX != null)
         {

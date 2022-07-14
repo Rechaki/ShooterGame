@@ -132,7 +132,7 @@ public class Enemy : MonoBehaviour
                 }
                 gameObject.SetActive(false);
                 state = State.Dead;
-                EventMsgManager.Launch(EventMsg.KilledTheEnemy);
+                EventMessenger.Launch(EventMsg.KilledTheEnemy);
             }
         }
     }

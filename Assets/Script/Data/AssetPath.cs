@@ -10,4 +10,5 @@
     public const string SPRINT_DEAD_VFX = "Prefab/Objects/SprintEnemyDead";
 
     public const string CHARACTER_DATA = "CSV/CharacterData";
+    public const string ENEMY_DATA = "CSV/EnemyData";
 }

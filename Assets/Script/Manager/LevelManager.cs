@@ -13,7 +13,7 @@ public class LevelManager : Singleton<LevelManager>
     public void LoadScene(string levelName) {
         if (levelName == "Clear")
         {
-            EventMsgManager.Launch(EventMsg.GameClear);
+            EventMessenger.Launch(EventMsg.GameClear);
             return;
         }
         CurrentLevel = levelName;

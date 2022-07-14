@@ -1,26 +1,21 @@
 ﻿public class PlayerData : BaseData
 {
-    public int nowHp;
-    public int maxHp;
+    public event EventDataHandler<CharacterData> RefreshEvent;
 
-    public event EventDataHandler<PlayerData> refreshEvent;
+    CharacterData character;
+    string _id = "C0000";
 
     public PlayerData() {
-        nowHp = 10;
-        maxHp = 10;
-        EventMsgManager.AddListener(EventMsg.Damage, Damage);
+        character = DataManager.I.GetCharacterData(_id);
+        character.RefreshEvent += Update;
     }
 
     ~PlayerData() {
-        EventMsgManager.RemoveListener(EventMsg.Damage, Damage);
+
     }
 
-    void Update() {
-        refreshEvent?.Invoke(this);
+    void Update(CharacterData data) {
+        RefreshEvent?.Invoke(data);
     }
 
-    void Damage() {
-        nowHp--;
-        Update();
-    }
 }
