@@ -44,6 +44,15 @@ public class DataManager : Singleton<DataManager>
 
     public EnemyData GetEnemyData(string id) {
         EnemyData data = new EnemyData();
+        EnemyBaseData baseData;
+        if (_enemyDic.TryGetValue(id, out baseData))
+        {
+            data = new EnemyData(baseData);
+        }
+        else
+        {
+            Debug.LogError($"No data found for id: {id}");
+        }
         return data;
     }
 
@@ -103,7 +112,7 @@ public class DataManager : Singleton<DataManager>
                 enemy.atkSpeed = float.Parse(item[8]);
                 enemy.turnSpeed = float.Parse(item[9]);
                 enemy.viewRadius = float.Parse(item[10]);
-                enemy.viewAngle = float.Parse(item[11]);
+                enemy.viewAngle = int.Parse(item[11]);
                 _enemyDic.Add(enemy.id, enemy);
             }
         }

@@ -33,11 +33,11 @@ public class Level : MonoBehaviour
         m_enemyIsAlive = false;
         foreach (var enemy in enemies)
         {
-            if (enemy.state != Enemy.State.Dead)
-            {
-                m_enemyIsAlive = true;
-                return;
-            }
+            //if (enemy._state != Enemy.State.Dead)
+            //{
+            //    m_enemyIsAlive = true;
+            //    return;
+            //}
         }
 
         if (!m_enemyIsAlive)

@@ -32,8 +32,8 @@ public class InputManager : Singleton<InputManager>
     Mouse Mouse => Mouse.current;
     Gamepad Gamepad => Gamepad.current;
 
-    Vector2 _leftStcikValue = Vector2.zero;
-    Vector2 _rightStcikValue = Vector2.zero;
+    Vector2 _leftStickValue = Vector2.zero;
+    Vector2 _rightStickValue = Vector2.zero;
     float _rightTriggerValue = 0;
 
     void Start() {
@@ -56,8 +56,8 @@ public class InputManager : Singleton<InputManager>
 
         if (DataManager.I.GameOver) return;
 
-        MoveEvent?.Invoke(_leftStcikValue);
-        LookAtEvent?.Invoke(_rightStcikValue);
+        MoveEvent?.Invoke(_leftStickValue);
+        LookAtEvent?.Invoke(_rightStickValue);
         FireEvent?.Invoke(_rightTriggerValue);
 
     }
@@ -119,14 +119,14 @@ public class InputManager : Singleton<InputManager>
         {
             inputValue.x = 1;
         }
-        _leftStcikValue = inputValue;
-        _rightStcikValue = Mouse.position.ReadValue();
+        _leftStickValue = inputValue;
+        _rightStickValue = Mouse.position.ReadValue();
         _rightTriggerValue = Mouse.leftButton.isPressed ? 1 : 0;
     }
 
     void GamepadInput() {
-        _leftStcikValue = Gamepad.leftStick.ReadValue();
-        _rightStcikValue = Gamepad.rightStick.ReadValue();
+        _leftStickValue = Gamepad.leftStick.ReadValue();
+        _rightStickValue = Gamepad.rightStick.ReadValue();
         _rightTriggerValue = Gamepad.rightTrigger.ReadValue();
     }
 

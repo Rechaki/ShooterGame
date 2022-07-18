@@ -29,8 +29,6 @@ public class Player : MonoBehaviour {
         InputManager.I.MoveEvent += Move;
         InputManager.I.LookAtEvent += LookAt;
         InputManager.I.FireEvent += Fire;
-
-        EventMessenger.AddListener(EventMsg.GameOver, Dead);
         DataManager.I.PlayerData.RefreshEvent += Refresh;
     }
 
@@ -45,8 +43,7 @@ public class Player : MonoBehaviour {
         InputManager.I.MoveEvent -= Move;
         InputManager.I.LookAtEvent -= LookAt;
         InputManager.I.FireEvent -= Fire;
-
-        EventMessenger.RemoveListener(EventMsg.GameOver, Dead);
+        DataManager.I.PlayerData.RefreshEvent -= Refresh;
     }
 
     void OnCollisionEnter(Collision collision) {
@@ -102,6 +99,20 @@ public class Player : MonoBehaviour {
         }
     }
 
+    void Refresh(CharacterData data) {
+        _moveSpeed = data.NowMoveSpeed;
+        _atkSpeed = data.NowAtkSpeed;
+        HPCheck(data.NowHp);
+    }
+
+    void HPCheck(int hp) {
+        if (hp <= 0)
+        {
+            Dead();
+            EventMessenger.Launch(EventMsg.GameOver);
+        }
+    }
+
     void Dead() {
         if (_deadVFXPrefab != null)
         {
@@ -113,11 +124,6 @@ public class Player : MonoBehaviour {
             vfx.Play();
         }
         gameObject.SetActive(false);
-    }
-
-    void Refresh(CharacterData data) {
-        _moveSpeed = data.NowMoveSpeed;
-        _atkSpeed = data.NowAtkSpeed;
     }
 
     void SetFriend() {

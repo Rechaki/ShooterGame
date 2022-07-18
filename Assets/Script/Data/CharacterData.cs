@@ -45,11 +45,6 @@ public class CharacterData : BaseData
             NowHp -= bullet.Damage;
             Update();
         }
-
-        if (NowHp == 0)
-        {
-            EventMessenger.Launch(EventMsg.GameOver);
-        }
     }
 
     void Update() {

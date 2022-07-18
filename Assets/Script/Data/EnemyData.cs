@@ -17,7 +17,7 @@ public class EnemyData : BaseData
     public float NowAtkSpeed { get; private set; }
     public float NowTurnSpeed { get; private set; }
     public float NowViewRadius { get; private set; }
-    public float NowViewAngle { get; private set; }
+    public int NowViewAngle { get; private set; }
 
     public event EventDataHandler<EnemyData> RefreshEvent;
 

@@ -34,5 +34,5 @@ public struct EnemyBaseData
     public float atkSpeed;
     public float turnSpeed;
     public float viewRadius;
-    public float viewAngle;
+    public int viewAngle;
 }
