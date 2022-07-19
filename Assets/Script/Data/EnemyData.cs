@@ -20,6 +20,7 @@ public class EnemyData : BaseData
     public int NowViewAngle { get; private set; }
     public State CurrentState { get; private set; }
     public GameObject Player { get; private set; }
+    public int HashCode { get; private set; }
 
     public event EventDataHandler<EnemyData> RefreshEvent;
 
@@ -47,19 +48,23 @@ public class EnemyData : BaseData
         NowViewRadius = baseData.viewRadius;
         NowViewAngle = baseData.viewAngle;
         CurrentState = State.Idle;
+        HashCode = GetHashCode();
 
-        EventMessenger<Collision>.AddListener(EventMsg.CollisionOfEnemy, CheckCollision);
-        EventMessenger<RaycastHit>.AddListener(EventMsg.RayHitObject, CheckRayHitObject);
+        EventMessenger<Collision>.AddListener("CollisionOfEnemy" + HashCode, new Callback<Collision>(CheckCollision));
+        EventMessenger<RaycastHit>.AddListener("RayHitObject" + HashCode, new Callback<RaycastHit>(CheckRayHitObject));
+        EventMessenger.AddListener(EventMsg.EnemyReturnToStartPos, new Callback(ToBackState));
+        EventMessenger.AddListener(EventMsg.EnemyToIdleState, new Callback(ToIdleState));
     }
 
     ~EnemyData() {
-        EventMessenger<Collision>.RemoveListener(EventMsg.CollisionOfEnemy, CheckCollision);
-        EventMessenger<RaycastHit>.RemoveListener(EventMsg.RayHitObject, CheckRayHitObject);
+        EventMessenger<Collision>.RemoveListener("CollisionOfEnemy" + HashCode, CheckCollision);
+        EventMessenger<RaycastHit>.RemoveListener("RayHitObject" + HashCode, CheckRayHitObject);
 
         RefreshEvent = null;
     }
 
     void CheckCollision(Collision collision) {
+        Debug.Log(this.GetHashCode());
         if (collision.transform.tag == "Bullet")
         {
             var bullet = collision.transform.GetComponent<Bullet>();
@@ -83,9 +88,16 @@ public class EnemyData : BaseData
         }
     }
 
+    void ToIdleState()
+    {
+        CurrentState = State.Idle;
+        Update();
+    }
+
     void ToBackState()
     {
-
+        CurrentState = State.Back;
+        Update();
     }
 
     void Update() {

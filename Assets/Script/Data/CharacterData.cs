@@ -31,11 +31,11 @@ public class CharacterData : BaseData
         NowMoveSpeed = baseData.moveSpeed;
         NowAtkSpeed = baseData.atkSpeed;
         NowViewRadius = baseData.viewRadius;
-        EventMessenger<Collision>.AddListener(EventMsg.CollisionOfPlayer, CheckCollision);
+        EventMessenger<Collision>.AddListener("CollisionOfPlayer", new Callback<Collision>(CheckCollision));
     }
 
     ~CharacterData() {
-        EventMessenger<Collision>.RemoveListener(EventMsg.CollisionOfPlayer, CheckCollision);
+        EventMessenger<Collision>.RemoveListener("CollisionOfPlayer", CheckCollision);
     }
 
     void CheckCollision(Collision collision) {

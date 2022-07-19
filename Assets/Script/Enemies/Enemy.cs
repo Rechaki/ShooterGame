@@ -30,6 +30,7 @@ public class Enemy : MonoBehaviour
     float _viewRadius;
     int _viewAngle;
     int _viewRayNum;
+    int _hashCode;
 
     void Start() {
         _bulletPrefab = ResourceManager.I.Load<GameObject>(AssetPath.ENEMY_BULLET);
@@ -38,12 +39,14 @@ public class Enemy : MonoBehaviour
         _startDirection = transform.rotation;
 
         var data = DataManager.I.GetEnemyData(_id);
+        //Debug.Log(data.GetHashCode());
         data.RefreshEvent += Refresh;
         Refresh(data);
         LevelManager.I.AddEnemy(data);
     }
 
     void Refresh(EnemyData data) {
+        //Debug.Log(data.GetHashCode());
         _currentState = data.CurrentState;
         _moveSpeed = data.NowMoveSpeed;
         _atkSpeed = data.NowAtkSpeed;
@@ -52,6 +55,7 @@ public class Enemy : MonoBehaviour
         _viewAngle = data.NowViewAngle;
         _viewRayNum = data.NowViewAngle / 5;
         _player = data.Player;
+        _hashCode = data.HashCode;
     }
 
     void Update() {
@@ -85,7 +89,7 @@ public class Enemy : MonoBehaviour
     }
 
     void OnCollisionEnter(Collision collision) {
-        EventMessenger<Collision>.Launch(EventMsg.CollisionOfPlayer, collision);
+        EventMessenger<Collision>.Launch("CollisionOfEnemy" + _hashCode, collision);
     }
 
     void IdleAction() {
@@ -99,7 +103,7 @@ public class Enemy : MonoBehaviour
             float distanceToStartPoint = Vector3.Distance(_startPoint, transform.position);
             if (distanceToStartPoint >= _maxLeaveDist)
             {
-                //EventMessenger.Launch(EventMsg)
+                EventMessenger.Launch(EventMsg.EnemyReturnToStartPos);
                 return;
             }
             else if (distanceToPlayer <= _minChaseDist)
@@ -108,7 +112,7 @@ public class Enemy : MonoBehaviour
             }
             else if (distanceToPlayer >= _maxChaseDist)
             {
-                //_state = State.Back;
+                EventMessenger.Launch(EventMsg.EnemyReturnToStartPos);
                 return;
             }
             else
@@ -125,12 +129,16 @@ public class Enemy : MonoBehaviour
                 RotateToPlayer();
             }
         }
+        else
+        {
+            EventMessenger.Launch(EventMsg.EnemyReturnToStartPos);
+        }
     }
 
     void BackAction() {
         if (IsInPosition(_startPoint))
         {
-           //_state = State.Idle;
+            EventMessenger.Launch(EventMsg.EnemyToIdleState);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, _startDirection, _turnSpeed);
             return;
         }
@@ -214,7 +222,7 @@ public class Enemy : MonoBehaviour
 
             if (hit.transform != null)
             {
-                EventMessenger<RaycastHit>.Launch(EventMsg.RayHitObject, hit);
+                EventMessenger<RaycastHit>.Launch("RayHitObject" + _hashCode, hit);
             }
         }
     }

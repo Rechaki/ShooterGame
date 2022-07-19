@@ -50,7 +50,7 @@ public class Player : MonoBehaviour {
 
     void OnCollisionEnter(Collision collision) {
         //Debug.Log(collision.transform.tag);
-        EventMessenger<Collision>.Launch(EventMsg.CollisionOfPlayer, collision);
+        EventMessenger<Collision>.Launch("CollisionOfPlayer", collision);
     }
 
     void Move(Vector2 v) {
