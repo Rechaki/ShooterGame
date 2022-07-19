@@ -17,6 +17,7 @@ public class GameManager : Singleton<GameManager>
 	public void Init() {
 		Application.targetFrameRate = 60;
 		DataManager.I.Init();
+		LevelManager.I.Init();
 
 		_inited = true;
 		DontDestroyOnLoad(this);

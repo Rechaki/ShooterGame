@@ -18,8 +18,18 @@ public class EnemyData : BaseData
     public float NowTurnSpeed { get; private set; }
     public float NowViewRadius { get; private set; }
     public int NowViewAngle { get; private set; }
+    public State CurrentState { get; private set; }
+    public GameObject Player { get; private set; }
 
     public event EventDataHandler<EnemyData> RefreshEvent;
+
+    public enum State
+    {
+        Idle,
+        Attack,
+        Back,
+        Dead,
+    }
 
     EnemyBaseData _baseData;
 
@@ -36,11 +46,17 @@ public class EnemyData : BaseData
         NowTurnSpeed = baseData.turnSpeed;
         NowViewRadius = baseData.viewRadius;
         NowViewAngle = baseData.viewAngle;
+        CurrentState = State.Idle;
+
         EventMessenger<Collision>.AddListener(EventMsg.CollisionOfEnemy, CheckCollision);
+        EventMessenger<RaycastHit>.AddListener(EventMsg.RayHitObject, CheckRayHitObject);
     }
 
     ~EnemyData() {
         EventMessenger<Collision>.RemoveListener(EventMsg.CollisionOfEnemy, CheckCollision);
+        EventMessenger<RaycastHit>.RemoveListener(EventMsg.RayHitObject, CheckRayHitObject);
+
+        RefreshEvent = null;
     }
 
     void CheckCollision(Collision collision) {
@@ -48,13 +64,28 @@ public class EnemyData : BaseData
         {
             var bullet = collision.transform.GetComponent<Bullet>();
             NowHp -= bullet.Damage;
+            CurrentState = NowHp <= 0 ? State.Dead : State.Attack;
             Update();
         }
+    }
 
-        if (NowHp == 0)
+    void CheckRayHitObject(RaycastHit hit)
+    {
+        if (hit.transform.tag == "Player")
         {
-            EventMessenger.Launch(EventMsg.GameOver);
+            Player = hit.transform.gameObject;
+            CurrentState = State.Attack;
+            Update();
         }
+        else
+        {
+            Player = null;
+        }
+    }
+
+    void ToBackState()
+    {
+
     }
 
     void Update() {

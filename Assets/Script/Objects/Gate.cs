@@ -13,7 +13,8 @@ public class Gate : MonoBehaviour
 
     void Start()
     {
-        
+        LevelManager.I.SetGate(gameObject);
+        gameObject.SetActive(false);
     }
 
     void Update()

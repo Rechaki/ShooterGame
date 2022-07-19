@@ -3,44 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Level : MonoBehaviour
+public class Level
 {
-    public Transform startPosition;
+    public string sceneName;
     public GameObject gate;
-    public List<Enemy> enemies = new List<Enemy>();
-    public string uiPath = AssetPath.MAIN_UI_PANEL;
+    public List<EnemyData> enemies = new List<EnemyData>();
 
-    private bool m_enemyIsAlive = true;
+    bool _enemyIsAlive = true;
 
-    void Start() {
-        gate.SetActive(false);
-        //ActionOwner owner = new ActionOwner
-        //{
-        //    component = transform,
-        //    action = CheckEnemiseState
-        //};
-        //EventMsgManager.Add(EventMsg.KilledTheEnemy, owner);
-        UIManager.I.Open(uiPath);
-
-    }
-
-    void Update()
+    public Level()
     {
-        
+        EventMessenger.AddListener(EventMsg.KilledTheEnemy, CheckEnemiseState);
     }
+
+    ~Level()
+    {
+        EventMessenger.RemoveListener(EventMsg.KilledTheEnemy, CheckEnemiseState);
+    }
+
 
     void CheckEnemiseState() {
-        m_enemyIsAlive = false;
+        _enemyIsAlive = false;
         foreach (var enemy in enemies)
         {
-            //if (enemy._state != Enemy.State.Dead)
-            //{
-            //    m_enemyIsAlive = true;
-            //    return;
-            //}
+            if (enemy.CurrentState != EnemyData.State.Dead)
+            {
+                _enemyIsAlive = true;
+                return;
+            }
         }
 
-        if (!m_enemyIsAlive)
+        if (!_enemyIsAlive)
         {
             gate.SetActive(true);
         }

@@ -18,8 +18,8 @@ public class Player : MonoBehaviour {
     float _atkSpeed;
     Queue<Vector3> _posQueue = new Queue<Vector3>();
 
-    private const float SPACE = 2.0f;
-    private const float LOOK_AT_DES = 10.0f;
+    const float SPACE = 2.0f;
+    const float LOOK_AT_DES = 10.0f;
 
     void Start() {
         _bulletPrefab = ResourceManager.I.Load<GameObject>(AssetPath.PLAYER_BULLET);
@@ -30,6 +30,8 @@ public class Player : MonoBehaviour {
         InputManager.I.LookAtEvent += LookAt;
         InputManager.I.FireEvent += Fire;
         DataManager.I.PlayerData.RefreshEvent += Refresh;
+
+        Refresh(DataManager.I.PlayerData.CharacterData);
     }
 
     void Update() {

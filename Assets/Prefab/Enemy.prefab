@@ -204,18 +204,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef0e27a4ade52e1498959243570589c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewRadius: 10
-  viewRayNum: 6
-  viewAngle: 30
-  moveSpeed: 1
-  turnSpeed: 3
-  minChaseDist: 3
-  maxChaseDist: 11
-  maxLeaveDist: 2
-  fireCd: 0.2
-  hp: 5
-  state: 0
-  firePoint: {fileID: 3239452255872729094}
+  _id: E0000
+  _minChaseDist: 3
+  _maxChaseDist: 11
+  _maxLeaveDist: 3
+  _firePoint: {fileID: 3239452255872729094}
 --- !u!1 &3239452255872729095
 GameObject:
   m_ObjectHideFlags: 0
