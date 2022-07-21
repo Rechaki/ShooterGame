@@ -24,7 +24,7 @@ public class LevelManager : Singleton<LevelManager>
     public void LoadScene(string levelName) {
         if (levelName == "Clear")
         {
-            EventMessenger.Launch(EventMsg.GameClear);
+            EventMessenger.Launch("GameClear");
             return;
         }
         CurrentLevel.sceneName = levelName;

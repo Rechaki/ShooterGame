@@ -52,8 +52,8 @@ public class EnemyData : BaseData
 
         EventMessenger<Collision>.AddListener("CollisionOfEnemy" + HashCode, new Callback<Collision>(CheckCollision));
         EventMessenger<RaycastHit>.AddListener("RayHitObject" + HashCode, new Callback<RaycastHit>(CheckRayHitObject));
-        EventMessenger.AddListener(EventMsg.EnemyReturnToStartPos, new Callback(ToBackState));
-        EventMessenger.AddListener(EventMsg.EnemyToIdleState, new Callback(ToIdleState));
+        EventMessenger.AddListener("EnemyReturnToStartPos", new Callback(ToBackState));
+        EventMessenger.AddListener("EnemyToIdleState", new Callback(ToIdleState));
     }
 
     ~EnemyData() {

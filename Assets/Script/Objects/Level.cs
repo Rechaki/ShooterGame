@@ -13,12 +13,12 @@ public class Level
 
     public Level()
     {
-        EventMessenger.AddListener(EventMsg.KilledTheEnemy, CheckEnemiseState);
+        EventMessenger.AddListener("KilledTheEnemy", CheckEnemiseState);
     }
 
     ~Level()
     {
-        EventMessenger.RemoveListener(EventMsg.KilledTheEnemy, CheckEnemiseState);
+        EventMessenger.RemoveListener("KilledTheEnemy", CheckEnemiseState);
     }
 
 

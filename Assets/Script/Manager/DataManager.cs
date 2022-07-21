@@ -62,7 +62,7 @@ public class DataManager : Singleton<DataManager>
         _stateData.isGameOver = false;
         GameOver = _stateData.isGameOver;
 
-        EventMessenger.AddListener(EventMsg.GameOver, SetGameOver);
+        EventMessenger.AddListener("GameOver", SetGameOver);
     }
 
     void SetGameOver() {

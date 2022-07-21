@@ -103,7 +103,7 @@ public class Enemy : MonoBehaviour
             float distanceToStartPoint = Vector3.Distance(_startPoint, transform.position);
             if (distanceToStartPoint >= _maxLeaveDist)
             {
-                EventMessenger.Launch(EventMsg.EnemyReturnToStartPos);
+                EventMessenger.Launch("EnemyReturnToStartPos");
                 return;
             }
             else if (distanceToPlayer <= _minChaseDist)
@@ -112,7 +112,7 @@ public class Enemy : MonoBehaviour
             }
             else if (distanceToPlayer >= _maxChaseDist)
             {
-                EventMessenger.Launch(EventMsg.EnemyReturnToStartPos);
+                EventMessenger.Launch("EnemyReturnToStartPos");
                 return;
             }
             else
@@ -131,14 +131,14 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            EventMessenger.Launch(EventMsg.EnemyReturnToStartPos);
+            EventMessenger.Launch("EnemyReturnToStartPos");
         }
     }
 
     void BackAction() {
         if (IsInPosition(_startPoint))
         {
-            EventMessenger.Launch(EventMsg.EnemyToIdleState);
+            EventMessenger.Launch("EnemyToIdleState");
             transform.rotation = Quaternion.RotateTowards(transform.rotation, _startDirection, _turnSpeed);
             return;
         }
@@ -148,7 +148,7 @@ public class Enemy : MonoBehaviour
     void DeadAction()
     {
         gameObject.SetActive(false);
-        EventMessenger.Launch(EventMsg.KilledTheEnemy);
+        EventMessenger.Launch("KilledTheEnemy");
     }
 
     void Fire() {

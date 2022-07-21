@@ -111,7 +111,7 @@ public class Player : MonoBehaviour {
         if (hp <= 0)
         {
             Dead();
-            EventMessenger.Launch(EventMsg.GameOver);
+            EventMessenger.Launch("GameOver");
         }
     }
 
