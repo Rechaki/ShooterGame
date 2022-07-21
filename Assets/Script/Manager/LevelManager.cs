@@ -24,14 +24,14 @@ public class LevelManager : Singleton<LevelManager>
     public void LoadScene(string levelName) {
         if (levelName == "Clear")
         {
-            EventMessenger.Launch("GameClear");
+            GlobalMessenger.Launch(EventMsg.GameClear);
             return;
         }
         CurrentLevel.sceneName = levelName;
         CurrentLevel.gate = null;
         CurrentLevel.enemies.Clear();
+        ObjectPool.I.ClearCachePool();
         SceneManager.LoadScene(levelName, LoadSceneMode.Single);
-        //EventMsgManager.Check();
 
     }
 }

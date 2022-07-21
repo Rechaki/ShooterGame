@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameClearPanel : MonoBehaviour
+public class GameClearPanel : UIPanel
 {
     public Button restartBtn;
 
-    private void Awake() {
+    protected override void Show() {
         restartBtn.onClick.AddListener(OnClikck);
     }
 
+    protected override void Hide() {
+
+    }
+
     private void OnClikck() {
-        EventMessenger.Launch("GameRestart");
+        GlobalMessenger.Launch(EventMsg.GameRestart);
         LevelManager.I.LoadScene("0_0");
     }
 }

@@ -10,12 +10,17 @@ public class DataManager : Singleton<DataManager>
     Dictionary<string, CharacterBaseData> _characterDic = new Dictionary<string, CharacterBaseData>();
     Dictionary<string, EnemyBaseData> _enemyDic = new Dictionary<string, EnemyBaseData>();
     GameStateData _stateData;
+    bool _inited = false;
 
     public void Init() {
-        Load();
+        if (!_inited)
+        {
+            Load();
+            GameStateInit();
+            PlayerDataInit();
 
-        GameStateInit();
-        PlayerDataInit();
+            _inited = true;
+        }
     }
 
     public void Load() {
@@ -62,7 +67,7 @@ public class DataManager : Singleton<DataManager>
         _stateData.isGameOver = false;
         GameOver = _stateData.isGameOver;
 
-        EventMessenger.AddListener("GameOver", SetGameOver);
+        GlobalMessenger.AddListener(EventMsg.GameOver, SetGameOver);
     }
 
     void SetGameOver() {

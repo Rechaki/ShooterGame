@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using System.Reflection;
 
-public static class EventMessenger<T>
+public static class GlobalMessenger<T>
 {
     private class EventData
     {
@@ -13,10 +13,10 @@ public static class EventMessenger<T>
         public bool isInvoking;
     }
 
-    private static Dictionary<string, EventData> _eventDic = new Dictionary<string, EventData>();
+    private static Dictionary<EventMsg, EventData> _eventDic = new Dictionary<EventMsg, EventData>();
 
-    public static void AddListener(string msg, Callback<T> handler) {
-        Dictionary<string, EventData> obj = _eventDic;
+    public static void AddListener(EventMsg msg, Callback<T> handler) {
+        Dictionary<EventMsg, EventData> obj = _eventDic;
         lock (obj)
         {
             EventData eventData;
@@ -29,8 +29,8 @@ public static class EventMessenger<T>
         }
     }
 
-    public static void RemoveListener(string msg, Callback<T> handler) {
-        Dictionary<string, EventData> obj = _eventDic;
+    public static void RemoveListener(EventMsg msg, Callback<T> handler) {
+        Dictionary<EventMsg, EventData> obj = _eventDic;
         lock (obj)
         {
             EventData eventData;
@@ -46,8 +46,8 @@ public static class EventMessenger<T>
         }
     }
 
-    public static void Launch(string msg, T arg) {
-        Dictionary<string, EventData> obj = _eventDic;
+    public static void Launch(EventMsg msg, T arg) {
+        Dictionary<EventMsg, EventData> obj = _eventDic;
         lock (obj)
         {
             EventData eventData;

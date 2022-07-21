@@ -20,7 +20,6 @@ public class EnemyData : BaseData
     public int NowViewAngle { get; private set; }
     public State CurrentState { get; private set; }
     public GameObject Player { get; private set; }
-    public int HashCode { get; private set; }
 
     public event EventDataHandler<EnemyData> RefreshEvent;
 
@@ -48,23 +47,13 @@ public class EnemyData : BaseData
         NowViewRadius = baseData.viewRadius;
         NowViewAngle = baseData.viewAngle;
         CurrentState = State.Idle;
-        HashCode = GetHashCode();
-
-        EventMessenger<Collision>.AddListener("CollisionOfEnemy" + HashCode, new Callback<Collision>(CheckCollision));
-        EventMessenger<RaycastHit>.AddListener("RayHitObject" + HashCode, new Callback<RaycastHit>(CheckRayHitObject));
-        EventMessenger.AddListener("EnemyReturnToStartPos", new Callback(ToBackState));
-        EventMessenger.AddListener("EnemyToIdleState", new Callback(ToIdleState));
     }
 
     ~EnemyData() {
-        EventMessenger<Collision>.RemoveListener("CollisionOfEnemy" + HashCode, CheckCollision);
-        EventMessenger<RaycastHit>.RemoveListener("RayHitObject" + HashCode, CheckRayHitObject);
-
         RefreshEvent = null;
     }
 
-    void CheckCollision(Collision collision) {
-        Debug.Log(this.GetHashCode());
+    public void CheckCollision(Collision collision) {
         if (collision.transform.tag == "Bullet")
         {
             var bullet = collision.transform.GetComponent<Bullet>();
@@ -74,27 +63,23 @@ public class EnemyData : BaseData
         }
     }
 
-    void CheckRayHitObject(RaycastHit hit)
+    public void CheckRayHitObject(RaycastHit hit)
     {
-        if (hit.transform.tag == "Player")
+        if (hit.transform.tag == "Player" && CurrentState != State.Attack)
         {
             Player = hit.transform.gameObject;
             CurrentState = State.Attack;
             Update();
         }
-        else
-        {
-            Player = null;
-        }
     }
 
-    void ToIdleState()
+    public void ToIdleState()
     {
         CurrentState = State.Idle;
         Update();
     }
 
-    void ToBackState()
+    public void ToBackState()
     {
         CurrentState = State.Back;
         Update();

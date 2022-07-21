@@ -17,10 +17,11 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     Transform _firePoint;
     
-    EnemyData.State _currentState;
+    EnemyData _enemyData;
     GameObject _player = null;
     GameObject _bulletPrefab;
     GameObject _deadVFXPrefab;
+    Vector3 _contactPoint;
     Vector3 _startPoint;          
     Quaternion _startDirection;   
     float _timer = 0;
@@ -30,7 +31,6 @@ public class Enemy : MonoBehaviour
     float _viewRadius;
     int _viewAngle;
     int _viewRayNum;
-    int _hashCode;
 
     void Start() {
         _bulletPrefab = ResourceManager.I.Load<GameObject>(AssetPath.ENEMY_BULLET);
@@ -38,16 +38,13 @@ public class Enemy : MonoBehaviour
         _startPoint = transform.position;
         _startDirection = transform.rotation;
 
-        var data = DataManager.I.GetEnemyData(_id);
-        //Debug.Log(data.GetHashCode());
-        data.RefreshEvent += Refresh;
-        Refresh(data);
-        LevelManager.I.AddEnemy(data);
+        _enemyData = DataManager.I.GetEnemyData(_id);
+        _enemyData.RefreshEvent += Refresh;
+        Refresh(_enemyData);
+        LevelManager.I.AddEnemy(_enemyData);
     }
 
     void Refresh(EnemyData data) {
-        //Debug.Log(data.GetHashCode());
-        _currentState = data.CurrentState;
         _moveSpeed = data.NowMoveSpeed;
         _atkSpeed = data.NowAtkSpeed;
         _turnSpeed = data.NowTurnSpeed;
@@ -55,7 +52,6 @@ public class Enemy : MonoBehaviour
         _viewAngle = data.NowViewAngle;
         _viewRayNum = data.NowViewAngle / 5;
         _player = data.Player;
-        _hashCode = data.HashCode;
     }
 
     void Update() {
@@ -63,9 +59,10 @@ public class Enemy : MonoBehaviour
         {
             return;
         }
-        switch (_currentState)
+        switch (_enemyData.CurrentState)
         {
             case EnemyData.State.Idle:
+                IdleAction();
                 break;
             case EnemyData.State.Attack:
                 AttackAction();
@@ -85,15 +82,16 @@ public class Enemy : MonoBehaviour
 
     void OnDestroy()
     {
-        //data.RefreshEvent -= Refresh;
+        _enemyData.RefreshEvent -= Refresh;
     }
 
     void OnCollisionEnter(Collision collision) {
-        EventMessenger<Collision>.Launch("CollisionOfEnemy" + _hashCode, collision);
+        _contactPoint = collision.transform.forward;
+        _enemyData.CheckCollision(collision);
     }
 
     void IdleAction() {
-
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, _startDirection, _turnSpeed);
     }
 
     void AttackAction() {
@@ -103,8 +101,7 @@ public class Enemy : MonoBehaviour
             float distanceToStartPoint = Vector3.Distance(_startPoint, transform.position);
             if (distanceToStartPoint >= _maxLeaveDist)
             {
-                EventMessenger.Launch("EnemyReturnToStartPos");
-                return;
+                _enemyData.ToBackState();
             }
             else if (distanceToPlayer <= _minChaseDist)
             {
@@ -112,8 +109,7 @@ public class Enemy : MonoBehaviour
             }
             else if (distanceToPlayer >= _maxChaseDist)
             {
-                EventMessenger.Launch("EnemyReturnToStartPos");
-                return;
+                _enemyData.ToBackState();
             }
             else
             {
@@ -131,15 +127,16 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            EventMessenger.Launch("EnemyReturnToStartPos");
+            //float angle = Vector3.Angle(_contactPoint, transform.forward);
+            //transform.Rotate(Vector3.up, Mathf.Min(_turnSpeed, Mathf.Abs(angle)));
+            _enemyData.ToBackState();
         }
     }
 
     void BackAction() {
         if (IsInPosition(_startPoint))
         {
-            EventMessenger.Launch("EnemyToIdleState");
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, _startDirection, _turnSpeed);
+            _enemyData.ToIdleState();
             return;
         }
         MoveToPosition(_startPoint);
@@ -148,7 +145,13 @@ public class Enemy : MonoBehaviour
     void DeadAction()
     {
         gameObject.SetActive(false);
-        EventMessenger.Launch("KilledTheEnemy");
+        GameObject vfxObj = ObjectPool.I.Pop(_deadVFXPrefab);
+        vfxObj.transform.position = transform.position;
+        vfxObj.transform.forward = _contactPoint;
+        vfxObj.SetActive(true);
+        ParticleSystemCtrl vfx = _deadVFXPrefab.GetComponent<ParticleSystemCtrl>();
+        vfx.Play();
+        GlobalMessenger.Launch(EventMsg.KilledTheEnemy);
     }
 
     void Fire() {
@@ -222,7 +225,7 @@ public class Enemy : MonoBehaviour
 
             if (hit.transform != null)
             {
-                EventMessenger<RaycastHit>.Launch("RayHitObject" + _hashCode, hit);
+                _enemyData.CheckRayHitObject(hit);
             }
         }
     }

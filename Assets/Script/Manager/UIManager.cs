@@ -4,7 +4,21 @@ using UnityEngine;
 
 public class UIManager : Singleton<UIManager>
 {
-    private Stack<UIPanel> m_windows = new Stack<UIPanel>();
+    [SerializeField]
+    string _theBeginningUI;
+
+    Stack<UIPanel> _windows = new Stack<UIPanel>();
+
+    void Start() {
+        if (!string.IsNullOrEmpty(_theBeginningUI))
+        {
+            Open(_theBeginningUI);
+        }
+    }
+
+    void OnDestroy() {
+        _windows.Clear();
+    }
 
     public void Open(string path) {
         var uiroot = GameObject.FindGameObjectWithTag("UIRoot");
@@ -33,29 +47,29 @@ public class UIManager : Singleton<UIManager>
     }
 
     public void Open(UIPanel panel) {
-        m_windows.Push(panel);
+        _windows.Push(panel);
     }
 
     public void CloseAll() {
-        while (m_windows.Count > 0)
+        while (_windows.Count > 0)
         {
-            m_windows.Pop().Out();
+            _windows.Pop().Out();
         }
     }
 
     public void CloseOthers() {
-        while (m_windows.Count > 1)
+        while (_windows.Count > 1)
         {
-            m_windows.Pop().Out();
+            _windows.Pop().Out();
         }
     }
 
     public void BackToPrevUI() {
-        m_windows.Pop().Out();
+        _windows.Pop().Out();
     }
 
     public UIPanel TopUI() {
-        return m_windows.Peek();
+        return _windows.Peek();
     }
 
 }

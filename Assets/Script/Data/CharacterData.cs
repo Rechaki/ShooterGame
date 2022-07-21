@@ -31,14 +31,13 @@ public class CharacterData : BaseData
         NowMoveSpeed = baseData.moveSpeed;
         NowAtkSpeed = baseData.atkSpeed;
         NowViewRadius = baseData.viewRadius;
-        EventMessenger<Collision>.AddListener("CollisionOfPlayer", new Callback<Collision>(CheckCollision));
     }
 
     ~CharacterData() {
-        EventMessenger<Collision>.RemoveListener("CollisionOfPlayer", CheckCollision);
+
     }
 
-    void CheckCollision(Collision collision) {
+    public void CheckCollision(Collision collision) {
         if (collision.transform.tag == "Bullet")
         {
             var bullet = collision.transform.GetComponent<Bullet>();

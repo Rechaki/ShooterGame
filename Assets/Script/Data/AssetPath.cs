@@ -1,7 +1,7 @@
 ﻿public static class AssetPath {
     public const string MAIN_UI_PANEL = "Prefab/UI/MainUIPanel";
-    public const string GAME_CLEAR_PANEL = "Prefab/UI/GameClearPanel";
     public const string GAME_OVER_PANEL = "Prefab/UI/GameOverPanel";
+    public const string GAME_CLEAR_PANEL = "Prefab/UI/GameClearPanel";
 
     public const string PLAYER_BULLET = "Prefab/Objects/PlayerBullet";
     public const string ENEMY_BULLET = "Prefab/Objects/EnemyBullet";

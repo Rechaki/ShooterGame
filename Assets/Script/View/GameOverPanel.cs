@@ -7,21 +7,18 @@ public class GameOverPanel : UIPanel
 {
     public Button restartBtn;
 
-    protected override void Hide() {
-        throw new System.NotImplementedException();
-    }
-
     protected override void Show() {
-        throw new System.NotImplementedException();
-    }
-
-    private void Awake() {
         restartBtn.onClick.AddListener(OnClikck);
     }
 
+    protected override void Hide() {
+
+    }
+
     private void OnClikck() {
-        EventMessenger.Launch("GameRestart");
-        LevelManager.I.LoadScene(LevelManager.I.CurrentLevel.sceneName);
+        GlobalMessenger.Launch(EventMsg.GameRestart);
+        //LevelManager.I.LoadScene(LevelManager.I.CurrentLevel.sceneName);
+        LevelManager.I.LoadScene("0_0");
     }
 
 }

@@ -14,35 +14,24 @@ public class GameManager : Singleton<GameManager>
 		}
 	}
 
-	public void Init() {
+    void OnDestroy() {
+		GlobalMessenger.RemoveListener(EventMsg.GameOver, GameOver);
+		GlobalMessenger.RemoveListener(EventMsg.GameClear, GameClear);
+		GlobalMessenger.RemoveListener(EventMsg.GameRestart, Restart);
+	}
+
+    public void Init() {
 		Application.targetFrameRate = 60;
 		DataManager.I.Init();
 		LevelManager.I.Init();
 
 		_inited = true;
-		DontDestroyOnLoad(this);
-		//isGameOver = false;
+		isGameOver = false;
+		//DontDestroyOnLoad(this);
 
-		//ActionOwner gamerClear = new ActionOwner
-		//{
-		//	component = transform,
-		//	action = GameClear
-		//};
-		//EventMsgManager.Add(EventMsg.GameClear, gamerClear);
-
-		//ActionOwner gamerOver = new ActionOwner
-		//{
-		//	component = transform,
-		//	action = GameOver
-		//};
-		//EventMsgManager.Add(EventMsg.GameOver, gamerOver);
-
-		//ActionOwner restart = new ActionOwner
-		//{
-		//	component = transform,
-		//	action = Restart
-		//};
-		//EventMsgManager.Add(EventMsg.GameRestart, restart);
+		GlobalMessenger.AddListener(EventMsg.GameOver, GameOver);
+		GlobalMessenger.AddListener(EventMsg.GameClear, GameClear);
+		GlobalMessenger.AddListener(EventMsg.GameRestart, Restart);
 	}
 
 	private void GameClear() {

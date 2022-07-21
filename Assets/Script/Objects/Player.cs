@@ -10,6 +10,7 @@ public class Player : MonoBehaviour {
     [SerializeField]
     Transform _firePoint;
 
+    CharacterData _characterData;
     GameObject _bulletPrefab;
     GameObject _deadVFXPrefab;
     Vector3 _lastPos = Vector3.zero;
@@ -30,6 +31,7 @@ public class Player : MonoBehaviour {
         InputManager.I.LookAtEvent += LookAt;
         InputManager.I.FireEvent += Fire;
         DataManager.I.PlayerData.RefreshEvent += Refresh;
+        //UIManager.I.Open(AssetPath.MAIN_UI_PANEL);
 
         Refresh(DataManager.I.PlayerData.CharacterData);
     }
@@ -49,8 +51,7 @@ public class Player : MonoBehaviour {
     }
 
     void OnCollisionEnter(Collision collision) {
-        //Debug.Log(collision.transform.tag);
-        EventMessenger<Collision>.Launch("CollisionOfPlayer", collision);
+        _characterData.CheckCollision(collision);
     }
 
     void Move(Vector2 v) {
@@ -102,6 +103,7 @@ public class Player : MonoBehaviour {
     }
 
     void Refresh(CharacterData data) {
+        _characterData = data;
         _moveSpeed = data.NowMoveSpeed;
         _atkSpeed = data.NowAtkSpeed;
         HPCheck(data.NowHp);
@@ -111,7 +113,7 @@ public class Player : MonoBehaviour {
         if (hp <= 0)
         {
             Dead();
-            EventMessenger.Launch("GameOver");
+            GlobalMessenger.Launch(EventMsg.GameOver);
         }
     }
 
