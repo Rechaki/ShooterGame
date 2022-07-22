@@ -4,20 +4,6 @@ using UnityEngine;
 
 public class Actor : MonoBehaviour
 {
-    private int _hp = 0;
-    private int _maxHp = 0;
-    private int _atk = 0;
-    private int _maxAtk = 0;
-    private int _def = 0;
-    private int _maxDef = 0;
-    private int _moveSpeed = 0;
-    private int _maxMoveSpeed = 0;
-    private ActorState _state = ActorState.None;
-    private List<SkillData> _skillDatas = new List<SkillData>();
-    private List<BuffData> _buffs = new List<BuffData>();
-    private Queue<BuffData> _buffsWaitingToAdd = new Queue<BuffData>();
-    private List<float> _buufTimer = new List<float>();
-
     public int HP { get { return _hp; } }
     public int MaxHP { get { return _maxHp; } }
     public int ATK { get { return _atk; } }
@@ -26,6 +12,20 @@ public class Actor : MonoBehaviour
     public int MaxDEF { get { return _maxDef; } }
     public int MoveSpeed { get { return _moveSpeed; } }
     public int MaxMoveSpeed { get { return _maxMoveSpeed; } }
+
+    int _hp = 0;
+    int _maxHp = 0;
+    int _atk = 0;
+    int _maxAtk = 0;
+    int _def = 0;
+    int _maxDef = 0;
+    int _moveSpeed = 0;
+    int _maxMoveSpeed = 0;
+    ActorState _state = ActorState.None;
+    List<SkillData> _skillDatas = new List<SkillData>();
+    List<BuffData> _buffs = new List<BuffData>();
+    Queue<BuffData> _buffsWaitingToAdd = new Queue<BuffData>();
+    List<float> _buufTimer = new List<float>();
 
     void Update() {
         StateUpdate();

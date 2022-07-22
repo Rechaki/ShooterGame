@@ -4,21 +4,22 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : Singleton<LevelManager>
 {
-    public Level CurrentLevel { get; private set; }
+    public Level CurrentLevel => _level;
+
+    Level _level = new Level();
 
     public void Init() {
-        CurrentLevel = new Level();
-        CurrentLevel.sceneName = SceneManager.GetActiveScene().name;
+        _level.sceneName = SceneManager.GetActiveScene().name;
     }
 
     public void SetGate(GameObject gate)
     {
-        CurrentLevel.gate = gate;
+        _level.gate = gate;
     }
 
     public void AddEnemy(EnemyData enemy)
     {
-        CurrentLevel.enemies.Add(enemy);
+        _level.enemies.Add(enemy);
     }
 
     public void LoadScene(string levelName) {
@@ -27,11 +28,11 @@ public class LevelManager : Singleton<LevelManager>
             GlobalMessenger.Launch(EventMsg.GameClear);
             return;
         }
-        CurrentLevel.sceneName = levelName;
-        CurrentLevel.gate = null;
-        CurrentLevel.enemies.Clear();
+        _level.sceneName = levelName;
+        _level.gate = null;
+        _level.enemies.Clear();
         ObjectPool.I.ClearCachePool();
-        SceneManager.LoadScene(levelName, LoadSceneMode.Single);
+        SceneManager.LoadScene(levelName);
 
     }
 }

@@ -10,22 +10,22 @@ public class Friend : MonoBehaviour
     public float fireCD = 0.2f;
     public int hp = 10;
 
-    private GameObject m_bulletPrefab;
-    private GameObject m_deadVFXPrefab;
-    private float m_time = 0.5f;
-    private bool m_rescued = false;
+    GameObject _bulletPrefab;
+    GameObject _deadVFXPrefab;
+    float _time = 0.5f;
+    bool _rescued = false;
 
     void Start()
     {
-        m_bulletPrefab = ResourceManager.I.Load<GameObject>(AssetPath.PLAYER_BULLET);
-        m_deadVFXPrefab = ResourceManager.I.Load<GameObject>(AssetPath.PLAYER_DEAD_VFX);
+        _bulletPrefab = ResourceManager.I.Load<GameObject>(AssetPath.PLAYER_BULLET);
+        _deadVFXPrefab = ResourceManager.I.Load<GameObject>(AssetPath.PLAYER_DEAD_VFX);
         targetPos = Vector3.zero;
-        m_rescued = false;
+        _rescued = false;
     }
 
     void Update()
     {
-        if (m_rescued)
+        if (_rescued)
         {
             LookAtMouse();
             Vector3 velocityTemp = Vector3.zero;
@@ -48,11 +48,11 @@ public class Friend : MonoBehaviour
 
             }
 
-            m_time += Time.deltaTime;
-            if (m_time > 0.2 && Input.GetMouseButton(0))
+            _time += Time.deltaTime;
+            if (_time > 0.2 && Input.GetMouseButton(0))
             {
                 Fire();
-                m_time = 0;
+                _time = 0;
             }
         }
 
@@ -62,12 +62,12 @@ public class Friend : MonoBehaviour
         //Debug.Log(collision.gameObject.name);
         if (collision.gameObject.tag == "Player")
         {
-            if (!m_rescued)
+            if (!_rescued)
             {
                 transform.rotation = Quaternion.identity;
                 Player player = collision.transform.GetComponent<Player>();
                 player.friends.Add(this);
-                m_rescued = true;
+                _rescued = true;
             }
         }
         if (collision.transform.tag == "Bullet")
@@ -75,13 +75,13 @@ public class Friend : MonoBehaviour
             hp -= 1;
             if (hp <= 0)
             {
-                if (m_deadVFXPrefab != null)
+                if (_deadVFXPrefab != null)
                 {
-                    GameObject vfxObj = ObjectPool.I.Pop(m_deadVFXPrefab);
+                    GameObject vfxObj = ObjectPool.I.Pop(_deadVFXPrefab);
                     vfxObj.transform.position = transform.position;
                     vfxObj.transform.forward = collision.transform.forward;
                     vfxObj.SetActive(true);
-                    ParticleSystemCtrl vfx = m_deadVFXPrefab.GetComponent<ParticleSystemCtrl>();
+                    ParticleSystemCtrl vfx = _deadVFXPrefab.GetComponent<ParticleSystemCtrl>();
                     vfx.Play();
                 }
                 gameObject.SetActive(false);
@@ -91,7 +91,7 @@ public class Friend : MonoBehaviour
     }
 
     private void Fire() {
-        GameObject bulletObject = ObjectPool.I.Pop(m_bulletPrefab);
+        GameObject bulletObject = ObjectPool.I.Pop(_bulletPrefab);
         bulletObject.transform.position = firePoint.position;
         Bullet bullet = bulletObject.GetComponent<Bullet>();
         bullet.transform.forward = transform.forward;
