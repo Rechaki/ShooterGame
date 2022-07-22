@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public int Damage { get; } = 1;
+    public int Damage { get; private set; } = 1;
     public float speed = 0.1f;
 
     void Start()
@@ -20,14 +20,24 @@ public class Bullet : MonoBehaviour
         }
     }
 
+    public void SetDamage(int damage) {
+        Damage = damage;
+    }
+
     void OnCollisionEnter(Collision collision) {
         //Debug.Log(collision.transform.name);
-        if (collision.transform.tag == "Bullet")
+        if (collision.transform.tag != "Bullet")
         {
-            return;
+            ObjectPool.I.Push(gameObject);
         }
-        ObjectPool.I.Push(gameObject);
 
+    }
+
+    void OnTriggerEnter(Collider other) {
+        if (other.transform.tag != "Bullet")
+        {
+            ObjectPool.I.Push(gameObject);
+        }
     }
 
 }

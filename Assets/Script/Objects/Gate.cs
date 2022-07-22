@@ -5,11 +5,11 @@ using UnityEngine;
 public class Gate : MonoBehaviour
 {
     [SerializeField]
-    private string nextLevel = "";
+    string nextLevel = "";
     [SerializeField]
-    private float angleSpeed = 1.0f;
+    float angleSpeed = 1.0f;
     [SerializeField]
-    private List<Transform> gateFx = new List<Transform>();
+    List<Transform> gateFx = new List<Transform>();
 
     void Start()
     {

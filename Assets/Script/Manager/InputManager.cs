@@ -54,7 +54,7 @@ public class InputManager : Singleton<InputManager>
                 break;
         }
 
-        if (DataManager.I.GameOver) return;
+        if (GameManager.I.isGameOver) return;
 
         MoveEvent?.Invoke(_leftStickValue);
         LookAtEvent?.Invoke(_rightStickValue);

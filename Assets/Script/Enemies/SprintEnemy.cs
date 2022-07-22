@@ -4,35 +4,33 @@ using UnityEngine;
 
 public class SprintEnemy : MonoBehaviour
 {
-    [Header("攻撃する当たり判定の半径")]
-    public int viewRadius = 10;
-    [Header("移動スピード")]
-    public float moveSpeed = 2.0f;
+    [SerializeField]
+    string _id = "E0001";
     [Header("スプリントスピード")]
-    public float sprintSpeed = 10.0f;
-    [Header("向きを変わるスピード")]
-    public float turnSpeed = 2.0f;
+    [SerializeField]
+    float _sprintSpeed = 15.0f;
 
-    public State state = State.Idle;
     public List<Transform> movePos = new List<Transform>();
+    public int Atk { get; private set; }
 
-    public enum State
-    {
-        Idle,
-        Attack,
-        Dead,
-    }
-
-    private GameObject m_deadVFX;
-    private Vector3 m_targetPos;
-    private int m_index = 0;
+    EnemyData _enemyData;
+    GameObject _deadVFX;
+    Vector3 _targetPos;
+    float _viewRadius;
+    float _moveSpeed;
+    float _turnSpeed;
+    int m_index = 0;
 
     void Start() {
-        m_deadVFX = ResourceManager.I.Load<GameObject>(AssetPath.SPRINT_DEAD_VFX);
+        _deadVFX = ResourceManager.I.Load<GameObject>(AssetPath.SPRINT_DEAD_VFX);
+        _enemyData = DataManager.I.GetEnemyData(_id);
+        _enemyData.RefreshEvent += Refresh;
+        Refresh(_enemyData);
+
         if (movePos.Count != 0)
         {
             m_index = 0;
-            m_targetPos = movePos[m_index].position;
+            _targetPos = movePos[m_index].position;
         }
         else
         {
@@ -46,15 +44,16 @@ public class SprintEnemy : MonoBehaviour
         {
             return;
         }
-        switch (state)
+        switch (_enemyData.CurrentState)
         {
-            case State.Idle:
-                MoveToPos();
+            case EnemyActionState.Idle:
+                IdleAction();
                 break;
-            case State.Attack:
-                transform.position += transform.forward * sprintSpeed * Time.deltaTime;
+            case EnemyActionState.Attack:
+                transform.position += transform.forward * _sprintSpeed * Time.deltaTime;
                 break;
-            case State.Dead:
+            case EnemyActionState.Dead:
+
                 break;
             default:
                 break;
@@ -63,13 +62,24 @@ public class SprintEnemy : MonoBehaviour
         SetFireView();
     }
 
+    void OnDestroy() {
+        _enemyData.RefreshEvent -= Refresh;
+    }
+
+    void Refresh(EnemyData data) {
+        Atk = data.NowAtk;
+        _moveSpeed = data.NowMoveSpeed;
+        _turnSpeed = data.NowTurnSpeed;
+        _viewRadius = data.NowViewRadius;
+    }
+
     void SetFireView() {
-        Vector3 farRayPos =  transform.forward * viewRadius;
+        Vector3 farRayPos =  transform.forward * _viewRadius;
         Vector3 rayPos = Quaternion.Euler(0, 0, 0) * farRayPos;
         Ray ray = new Ray(transform.position, rayPos);
         RaycastHit hit = new RaycastHit();
         int mask = LayerMask.GetMask("Player", "Default");
-        Physics.Raycast(ray, out hit, viewRadius, mask);
+        Physics.Raycast(ray, out hit, _viewRadius, mask);
         Vector3 pos = transform.position + rayPos;
         if (hit.transform != null)
         {
@@ -82,7 +92,7 @@ public class SprintEnemy : MonoBehaviour
         {
             if (hit.transform.tag == "Player" || hit.transform.tag == "Friend")
             {
-                state = State.Attack;
+                _enemyData.ToAttckState();
             }
         }
     }
@@ -93,42 +103,38 @@ public class SprintEnemy : MonoBehaviour
         {
             return;
         }
-        if (other.gameObject.tag == "Player")
+        if (_deadVFX != null)
         {
-            GlobalMessenger.Launch(EventMsg.Damage);
-        }
-        if (m_deadVFX != null)
-        {
-            GameObject vfxObj = ObjectPool.I.Pop(m_deadVFX);
+            GameObject vfxObj = ObjectPool.I.Pop(_deadVFX);
             vfxObj.transform.position = transform.position;
             vfxObj.transform.forward = other.transform.forward;
             vfxObj.SetActive(true);
-            ParticleSystemCtrl vfx = m_deadVFX.GetComponent<ParticleSystemCtrl>();
+            ParticleSystemCtrl vfx = _deadVFX.GetComponent<ParticleSystemCtrl>();
             vfx.Play();
         }
         gameObject.SetActive(false);
-        state = State.Dead;
+        _enemyData.ToDeadState();
     }
 
-    void MoveToPos() {
+    void IdleAction() {
         if (m_index != -1)
         {
-            if (Vector3.Distance(m_targetPos, transform.position) < 0.5f)
+            if (Vector3.Distance(_targetPos, transform.position) < 0.5f)
             {
                 m_index++;
                 if (m_index == movePos.Count)
                 {
                     m_index = 0;
                 }
-                m_targetPos = movePos[m_index].position;
+                _targetPos = movePos[m_index].position;
             }
             if (IsFacingToPlayer())
             {
-                transform.position += (m_targetPos - transform.position).normalized * moveSpeed * Time.deltaTime;
+                transform.position += (_targetPos - transform.position).normalized * _moveSpeed * Time.deltaTime;
             }
             else
             {
-                RotateToPos(m_targetPos);
+                RotateToPos(_targetPos);
             }
         }
     }
@@ -140,11 +146,11 @@ public class SprintEnemy : MonoBehaviour
         cross.x = 0;
         cross.z = 0;
         float angle = Vector3.Angle(transform.forward, v);
-        transform.Rotate(cross, Mathf.Min(turnSpeed, Mathf.Abs(angle)));
+        transform.Rotate(cross, Mathf.Min(_turnSpeed, Mathf.Abs(angle)));
     }
 
     bool IsFacingToPlayer() {
-        Vector3 distance = m_targetPos - transform.position;
+        Vector3 distance = _targetPos - transform.position;
         distance.y = 0;
         if (Vector3.Angle(transform.forward, distance) < 1)
         {

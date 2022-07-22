@@ -5,26 +5,21 @@ using UnityEngine;
 public class ParticleSystemCtrl : MonoBehaviour
 {
     [SerializeField]
-    private ParticleSystem m_particleSystem;
+    ParticleSystem _particleSystem;
 
-    void Start() {
-
-    }
-
-    // Update is called once per frame
     void Update() {
-        if (m_particleSystem == null)
+        if (_particleSystem == null)
         {
             return;
         }
 
-        if (gameObject.activeSelf && m_particleSystem.isStopped)
+        if (gameObject.activeSelf && _particleSystem.isStopped)
         {
             ObjectPool.I.Push(gameObject);
         }
     }
 
     public void Play() {
-        m_particleSystem.Play();
+        _particleSystem.Play();
     }
 }

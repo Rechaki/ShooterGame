@@ -5,7 +5,6 @@ using UnityEngine;
 public class DataManager : Singleton<DataManager>
 {
     public PlayerData PlayerData { get; private set; }
-    public bool GameOver { get; private set; }
 
     Dictionary<string, CharacterBaseData> _characterDic = new Dictionary<string, CharacterBaseData>();
     Dictionary<string, EnemyBaseData> _enemyDic = new Dictionary<string, EnemyBaseData>();
@@ -18,6 +17,8 @@ public class DataManager : Singleton<DataManager>
             Load();
             GameStateInit();
             PlayerDataInit();
+
+            GlobalMessenger.AddListener(EventMsg.GameRestart, ReInit);
 
             _inited = true;
         }
@@ -61,17 +62,15 @@ public class DataManager : Singleton<DataManager>
         return data;
     }
 
+    void ReInit() {
+        GameStateInit();
+        PlayerDataInit();
+    }
+
     void GameStateInit() {
         _stateData = new GameStateData();
         _stateData.isClear = false;
         _stateData.isGameOver = false;
-        GameOver = _stateData.isGameOver;
-
-        GlobalMessenger.AddListener(EventMsg.GameOver, SetGameOver);
-    }
-
-    void SetGameOver() {
-        GameOver = true;
     }
 
     void PlayerDataInit() {

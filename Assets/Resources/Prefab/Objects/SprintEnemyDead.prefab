@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2301422984667685854}
   - component: {fileID: 4836898803130044525}
   m_Layer: 0
-  m_Name: EnemyDead 1
+  m_Name: SprintEnemyDead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4825,4 +4825,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a54238478e7ccdf4199c87e5fc93767c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_particleSystem: {fileID: 7270293130558676655}
+  _particleSystem: {fileID: 7270293130558676655}
