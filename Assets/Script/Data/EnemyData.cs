@@ -18,18 +18,9 @@ public class EnemyData : BaseData
     public float NowTurnSpeed { get; private set; }
     public float NowViewRadius { get; private set; }
     public int NowViewAngle { get; private set; }
-    public State CurrentState { get; private set; }
-    public GameObject Player { get; private set; }
+    public EnemyActionState CurrentState { get; private set; }
 
     public event EventDataHandler<EnemyData> RefreshEvent;
-
-    public enum State
-    {
-        Idle,
-        Attack,
-        Back,
-        Dead,
-    }
 
     EnemyBaseData _baseData;
 
@@ -46,42 +37,41 @@ public class EnemyData : BaseData
         NowTurnSpeed = baseData.turnSpeed;
         NowViewRadius = baseData.viewRadius;
         NowViewAngle = baseData.viewAngle;
-        CurrentState = State.Idle;
+        CurrentState = EnemyActionState.Idle;
     }
 
     ~EnemyData() {
         RefreshEvent = null;
     }
 
-    public void CheckCollision(Collision collision) {
-        if (collision.transform.tag == "Bullet")
+    public void Damage(int damage) {
+        NowHp -= damage;
+        if (NowHp <= 0)
         {
-            var bullet = collision.transform.GetComponent<Bullet>();
-            NowHp -= bullet.Damage;
-            CurrentState = NowHp <= 0 ? State.Dead : State.Attack;
-            Update();
+            ToDeadState();
         }
     }
 
-    public void CheckRayHitObject(RaycastHit hit)
-    {
-        if (hit.transform.tag == "Player" && CurrentState != State.Attack)
-        {
-            Player = hit.transform.gameObject;
-            CurrentState = State.Attack;
-            Update();
-        }
-    }
-
-    public void ToIdleState()
-    {
-        CurrentState = State.Idle;
+    public void ToIdleState() {
+        if (CurrentState == EnemyActionState.Dead) return;
+        CurrentState = EnemyActionState.Idle;
         Update();
     }
 
-    public void ToBackState()
-    {
-        CurrentState = State.Back;
+    public void ToAttckState() {
+        if (CurrentState == EnemyActionState.Dead) return;
+        CurrentState = EnemyActionState.Attack;
+        Update();
+    }
+
+    public void ToBackState() {
+        if (CurrentState == EnemyActionState.Dead) return;
+        CurrentState = EnemyActionState.Back;
+        Update();
+    }
+
+    public void ToDeadState() {
+        CurrentState = EnemyActionState.Dead;
         Update();
     }
 

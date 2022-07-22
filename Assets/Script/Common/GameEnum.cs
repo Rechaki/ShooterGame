@@ -8,7 +8,15 @@
 public enum EnemyType
 {
     None = 0,
-    Chase = 1,
+    Chase = 1,                          //追いかける
+}
+
+public enum EnemyActionState
+{
+    Idle,
+    Attack,
+    Back,
+    Dead,
 }
 
 //スキルのタイプ

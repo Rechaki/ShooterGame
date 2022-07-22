@@ -31,6 +31,7 @@ public class Enemy : MonoBehaviour
     float _viewRadius;
     int _viewAngle;
     int _viewRayNum;
+    int _atk;
 
     void Start() {
         _bulletPrefab = ResourceManager.I.Load<GameObject>(AssetPath.ENEMY_BULLET);
@@ -45,32 +46,32 @@ public class Enemy : MonoBehaviour
     }
 
     void Refresh(EnemyData data) {
+        _atk = data.NowAtk;
         _moveSpeed = data.NowMoveSpeed;
         _atkSpeed = data.NowAtkSpeed;
         _turnSpeed = data.NowTurnSpeed;
         _viewRadius = data.NowViewRadius;
         _viewAngle = data.NowViewAngle;
         _viewRayNum = data.NowViewAngle / 5;
-        _player = data.Player;
     }
 
     void Update() {
-        if (GameManager.I.isGameOver)
+        if (GameManager.I.isGameOver || !gameObject.activeSelf)
         {
             return;
         }
         switch (_enemyData.CurrentState)
         {
-            case EnemyData.State.Idle:
+            case EnemyActionState.Idle:
                 IdleAction();
                 break;
-            case EnemyData.State.Attack:
+            case EnemyActionState.Attack:
                 AttackAction();
                 break;
-            case EnemyData.State.Back:
+            case EnemyActionState.Back:
                 BackAction();
                 break;
-            case EnemyData.State.Dead:
+            case EnemyActionState.Dead:
                 DeadAction();
                 break;
             default:
@@ -86,8 +87,12 @@ public class Enemy : MonoBehaviour
     }
 
     void OnCollisionEnter(Collision collision) {
-        _contactPoint = collision.transform.forward;
-        _enemyData.CheckCollision(collision);
+        if (collision.transform.tag == "Bullet")
+        {
+            var bullet = collision.transform.GetComponent<Bullet>();
+            _enemyData.Damage(bullet.Damage);
+            _contactPoint = collision.transform.forward;
+        }
     }
 
     void IdleAction() {
@@ -158,8 +163,10 @@ public class Enemy : MonoBehaviour
         if (_timer > _atkSpeed)
         {
             _timer = 0;
-            var bulletObject = Instantiate(_bulletPrefab, _firePoint.position, Quaternion.identity);
+            GameObject bulletObject = ObjectPool.I.Pop(_bulletPrefab);
+            bulletObject.transform.position = _firePoint.position;
             Bullet bullet = bulletObject.GetComponent<Bullet>();
+            bullet.SetDamage(_atk);
             bullet.transform.forward = transform.forward;
         }
         _timer += Time.deltaTime;
@@ -207,6 +214,7 @@ public class Enemy : MonoBehaviour
 
     void SetFireView() {
         Vector3 farLeftRayPos = Quaternion.Euler(0, -_viewAngle / 2, 0) * transform.forward * _viewRadius;
+        bool isPlayer = false;
         for (int i = 0; i <= _viewRayNum; i++)
         {
             Vector3 rayPos = Quaternion.Euler(0, (_viewAngle / _viewRayNum) * i, 0) * farLeftRayPos;
@@ -225,8 +233,19 @@ public class Enemy : MonoBehaviour
 
             if (hit.transform != null)
             {
-                _enemyData.CheckRayHitObject(hit);
+                if (hit.transform.tag == "Player")
+                {
+                    isPlayer = true;
+                    _player = hit.transform.gameObject;
+                    _enemyData.ToAttckState();
+                }
             }
+        }
+
+        if (!isPlayer)
+        {
+            _player = null;
+            _enemyData.ToBackState();
         }
     }
 

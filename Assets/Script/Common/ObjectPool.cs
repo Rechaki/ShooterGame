@@ -4,27 +4,14 @@ using UnityEngine;
 
 public class ObjectPool : Singleton<ObjectPool>
 {
-    private Dictionary<int, Queue<GameObject>> m_poolDic = new Dictionary<int, Queue<GameObject>>();
-    private Dictionary<GameObject, int> m_poppedIdDic = new Dictionary<GameObject, int>();
-
-    public void ClearCachePool() {
-        foreach (var item in m_poolDic)
-        {
-            foreach (var go in item.Value)
-            {
-                Destroy(go);
-            }
-            item.Value.Clear();
-        }
-        m_poolDic.Clear();
-        m_poppedIdDic.Clear();
-    }
+    private Dictionary<int, Queue<GameObject>> _poolDic = new Dictionary<int, Queue<GameObject>>();
+    private Dictionary<GameObject, int> _poppedIdDic = new Dictionary<GameObject, int>();
 
     public GameObject Pop(GameObject prefab) {
         int id = prefab.GetInstanceID();
         GameObject go = null;
         Queue<GameObject> objects;
-        if (m_poolDic.TryGetValue(id, out objects) && objects.Count > 0)
+        if (_poolDic.TryGetValue(id, out objects) && objects.Count > 0)
         {
             go = objects.Dequeue();
         }
@@ -33,7 +20,7 @@ public class ObjectPool : Singleton<ObjectPool>
             if (objects == null)
             {
                 objects = new Queue<GameObject>();
-                m_poolDic.Add(id, objects);
+                _poolDic.Add(id, objects);
             }
 
             if (objects.Count == 0)
@@ -43,7 +30,7 @@ public class ObjectPool : Singleton<ObjectPool>
             //objects.Enqueue(go);
         }
 
-        m_poppedIdDic.Add(go, id);
+        _poppedIdDic.Add(go, id);
         return go;
     }
 
@@ -57,22 +44,40 @@ public class ObjectPool : Singleton<ObjectPool>
         go.transform.parent = transform;
 
         int id;
-        if (m_poppedIdDic.TryGetValue(go, out id))
+        if (_poppedIdDic.TryGetValue(go, out id))
         {
-            m_poppedIdDic.Remove(go);
+            _poppedIdDic.Remove(go);
             Queue<GameObject> objects;
-            if (m_poolDic.TryGetValue(id, out objects))
+            if (_poolDic.TryGetValue(id, out objects))
             {
                 objects.Enqueue(go);
                 
             }
             else
             {
-                m_poolDic[id] = new Queue<GameObject>();
-                m_poolDic[id].Enqueue(go);
+                _poolDic[id] = new Queue<GameObject>();
+                _poolDic[id].Enqueue(go);
             }
 
         }
+    }
+
+    public void ClearCachePool() {
+        foreach (var item in _poolDic)
+        {
+            foreach (var go in item.Value)
+            {
+                Destroy(go);
+            }
+            item.Value.Clear();
+        }
+        _poolDic.Clear();
+
+        foreach (var item in _poppedIdDic)
+        {
+            Destroy(item.Key);
+        }
+        _poppedIdDic.Clear();
     }
 
 }

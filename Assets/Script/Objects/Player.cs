@@ -31,7 +31,6 @@ public class Player : MonoBehaviour {
         InputManager.I.LookAtEvent += LookAt;
         InputManager.I.FireEvent += Fire;
         DataManager.I.PlayerData.RefreshEvent += Refresh;
-        //UIManager.I.Open(AssetPath.MAIN_UI_PANEL);
 
         Refresh(DataManager.I.PlayerData.CharacterData);
     }
@@ -51,7 +50,19 @@ public class Player : MonoBehaviour {
     }
 
     void OnCollisionEnter(Collision collision) {
-        _characterData.CheckCollision(collision);
+        if (collision.transform.tag == "Bullet")
+        {
+            var bullet = collision.transform.GetComponent<Bullet>();
+            _characterData.Damage(bullet.Damage);
+        }
+        else if (collision.transform.tag == "Enemy")
+        {
+            var enemy = collision.transform.GetComponent<SprintEnemy>();
+            if (enemy != null)
+            {
+                _characterData.Damage(enemy.Atk);
+            }
+        }
     }
 
     void Move(Vector2 v) {

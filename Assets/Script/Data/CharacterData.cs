@@ -37,13 +37,9 @@ public class CharacterData : BaseData
 
     }
 
-    public void CheckCollision(Collision collision) {
-        if (collision.transform.tag == "Bullet")
-        {
-            var bullet = collision.transform.GetComponent<Bullet>();
-            NowHp -= bullet.Damage;
-            Update();
-        }
+    public void Damage(int damage) {
+        NowHp -= damage;
+        Update();
     }
 
     void Update() {

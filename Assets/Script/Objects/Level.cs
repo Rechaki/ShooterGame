@@ -9,31 +9,27 @@ public class Level
     public GameObject gate;
     public List<EnemyData> enemies = new List<EnemyData>();
 
-    bool _enemyIsAlive = true;
-
-    public Level()
-    {
+    public Level() {
         GlobalMessenger.AddListener(EventMsg.KilledTheEnemy, CheckEnemiseState);
     }
 
-    ~Level()
-    {
+    ~Level() {
         GlobalMessenger.RemoveListener(EventMsg.KilledTheEnemy, CheckEnemiseState);
     }
 
 
     void CheckEnemiseState() {
-        _enemyIsAlive = false;
+        bool isAlive = false;
         foreach (var enemy in enemies)
         {
-            if (enemy.CurrentState != EnemyData.State.Dead)
+            if (enemy.CurrentState != EnemyActionState.Dead)
             {
-                _enemyIsAlive = true;
+                isAlive = true;
                 return;
             }
         }
 
-        if (!_enemyIsAlive)
+        if (!isAlive)
         {
             gate.SetActive(true);
         }

@@ -11,7 +11,7 @@ public class MainUIPanel : UIPanel
         Debug.Log("Show");
         var playerData = DataManager.I.PlayerData;
         playerData.RefreshEvent += Refresh;
-        hp.fillAmount = 1;
+        Refresh(playerData.CharacterData);
     }
 
     protected override void Hide() {
